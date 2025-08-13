@@ -2,8 +2,9 @@ import { PlayerBase } from '../PlayerBase';
 import { clamp, roundInt, computeAverage, computeTarget, pickRandom } from '../../utils/math';
 import type { IPlayer } from '../IPlayer';
 
-export class HalfKnowledgeKing extends PlayerBase {
+export class Kuzuryu extends PlayerBase {
     // Predict others (expectation-based), then scan a small candidate set to maximize chance of unique-closest.
+    // Cooresponding to Kuzuryu, always able to find how people is doing
     chooseNumber(): number {
         return this.pickBest(false);
     }

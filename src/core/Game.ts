@@ -10,7 +10,7 @@ export class Game {
     }
 
     injectOpponentsForPredictors() {
-        // Provide opponents to HalfKnowledgeKing/DualModeAlice
+        // Provide opponents to Kuzuryu
         for (const p of this.players) {
             // @ts-ignore
             p.__opponents = this.players.filter(q => q.id !== p.id);

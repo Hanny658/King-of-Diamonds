@@ -6,18 +6,17 @@ import { SaboteurPlayer } from './players/SaboteurPlayer';
 import { QuitterPlayer } from './players/QuitterPlayer';
 import { CopycatPlayer } from './players/CopycatPlayer';
 import { SmoothPlayer } from './players/SmoothPlayer';
-import { MultiStepPlayer } from './players/MultiStepPlayer';
+import { Mathematician } from './players/Mathematician';
 import { GamblerPlayer } from './players/GamblerPlayer';
-import { HalfKnowledgeKing } from './players/HalfKnowledgeKing';
-import { DualModeAlice } from './players/DualModeAlice';
+import { Kuzuryu } from './players/Kuzuryu';
 
 export const ALL_KINDS: Personality[] = [
     'Rational', 'SwingRational', 'Saboteur', 'Quitter', 'Copycat',
-    'Smooth', 'MultiStep', 'Gambler', 'HalfKnowledgeKing', 'DualModeAlice'
+    'Smooth', 'Gambler', 'Mathematician', 'Kuzuryu'
 ];
 
 export const SINGLETON_KINDS: Personality[] = [
-    'HalfKnowledgeKing', 'DualModeAlice'
+    'Kuzuryu'
 ];
 
 export function createPlayer(kind: Personality, id: number, name: string): IPlayer {
@@ -28,10 +27,9 @@ export function createPlayer(kind: Personality, id: number, name: string): IPlay
         case 'Quitter': return new QuitterPlayer(id, name, kind);
         case 'Copycat': return new CopycatPlayer(id, name, kind);
         case 'Smooth': return new SmoothPlayer(id, name, kind);
-        case 'MultiStep': return new MultiStepPlayer(id, name, kind);
         case 'Gambler': return new GamblerPlayer(id, name, kind);
-        case 'HalfKnowledgeKing': return new HalfKnowledgeKing(id, name, kind);
-        case 'DualModeAlice': return new DualModeAlice(id, name, kind);
+        case 'Mathematician': return new Mathematician(id, name, kind);
+        case 'Kuzuryu': return new Kuzuryu(id, name, kind);
         default: return new RationalPlayer(id, name, 'Rational');
     }
 }

@@ -14,10 +14,9 @@ export type Personality =
     | 'Quitter'
     | 'Copycat'
     | 'Smooth'
-    | 'MultiStep'
     | 'Gambler'
-    | 'HalfKnowledgeKing'
-    | 'DualModeAlice';
+    | 'Mathematician'
+    | 'Kuzuryu';
 
 export type PlayerSnapshot = {
     id: number;

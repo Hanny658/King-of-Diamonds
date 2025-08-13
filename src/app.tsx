@@ -71,7 +71,7 @@ export default function App() {
   }
 
   function startGame() {
-    // 1) make sure Alice/King not duplicated
+    // 1) make sure Kuzuryu not duplicated
     const used = new Set<Personality>();
     for (const r of roster) if (r.kind && SINGLETON_KINDS.includes(r.kind)) used.add(r.kind);
 
@@ -172,7 +172,7 @@ export default function App() {
                 </tbody>
               </table>
               <p className="text-xs text-slate-400 mt-2">
-                Alice (DualModeAlice) & King (HalfKnowledgeKing) are limited to one instance per game. Unassigned AIs will be randomized on start.
+                Kuzuryu are limited to one instance per game. Unassigned AIs will be randomized on start.
               </p>
             </div>
           </section>

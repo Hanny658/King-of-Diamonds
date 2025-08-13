@@ -1,2 +1,4 @@
-# King-of-Diamonds
-Implementation of the classic beauty contest game from Alice in Boarderland. With various AI (including the King and Alice) players and Game UI.
+# King-of-Diamonds - てんびん
+Implementation of the classic beauty contest game from Alice in Boarderland - てんびん(天秤).
+
+With various AI (including Kuzuryu and mathematician mimicking from the series) characteristics and Game UI.
