@@ -352,7 +352,9 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
                         {r.choices.map(c => (
                           <span key={`${r.roundNumber}-${c.playerId}`} 
                                 className={`inline-flex items-center px-2 py-0.5 rounded
-                                ${c.playerId == r.winnerId ? "!bg-amber-500/40" : "bg-slate-700"}`}>
+                                ${c.playerId == r.winnerId ? 
+                                  (c.value == Math.round(r.target) ? "rainbow-bg" : "!bg-amber-500/40") 
+                                : "bg-slate-700"}`}>
                             P{c.playerId}:{c.value < 0 ? '—' : c.value} &nbsp;
                           </span>
                         ))}

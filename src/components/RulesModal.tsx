@@ -91,7 +91,12 @@ export function GameInfoModal({ players, allKinds, settings }: Props) {
                                         <li><b>Average & target:</b> compute the average using <i>only alive players’</i> choices; the target is <span className="font-mono">T = 0.8 × average</span>.</li>
                                         <li><b>All-same penalty:</b> if all alive players chose the same number, all alive lose 1 HP.</li>
                                         <li><b>Tie-discard rule:</b> find the closest distance(s) to T; if there’s a tie at that distance, discard the whole group and search the next ring outward until a unique closest player is found.</li>
-                                        <li><b>Damage:</b> the unique closest player is safe; every other alive player loses 1 HP.</li>
+                                        <li>
+                                            <b>Damage.</b> The unique winner (if any) takes no damage; all other <i>alive</i> players lose 1 HP.
+                                            In a degenerate “all rings tie” situation, all alive players lose 1 HP.
+                                            <br />
+                                            <b>Perfect hit:</b> If the winner’s chosen number equals <code>round(T)</code>, all other alive players lose <b>2 HP</b> instead.
+                                        </li>
                                         <li><b>Dead players:</b> players with HP = 0 are skipped (recorded as “—”) and do not affect average or T.</li>
                                         <li><b>Special 2-player rule:</b> when exactly two players are alive and the picks are <span className="font-mono">0</span> and <span className="font-mono">100</span>, the <b>100</b> picker wins that round.</li>
                                         <li><b>End of match:</b> when only one player remains alive, they are declared the winner.</li>

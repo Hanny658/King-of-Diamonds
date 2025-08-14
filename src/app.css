@@ -27,10 +27,33 @@
   color: #888;
 }
 
+/* Into screen animation for floating windows */
 @keyframes kf-fade-scale-in {
   0%   { opacity: 0; transform: scale(0.96); }
   100% { opacity: 1; transform: scale(1); }
 }
 .kd-animate-in {
   animation: kf-fade-scale-in 180ms ease-out forwards;
+}
+
+/* Rainbow animation bg (for perfect hits) */
+.rainbow-bg {
+  background: linear-gradient(
+    270deg,
+    rgba(255, 0, 0, 0.4),
+    rgba(255, 165, 0, 0.4),
+    rgba(255, 255, 0, 0.4),
+    rgba(0, 128, 0, 0.4),
+    rgba(0, 0, 255, 0.4),
+    rgba(75, 0, 130, 0.4),
+    rgba(238, 130, 238, 0.4)
+  );
+  background-size: 1400% 1400%;
+  animation: rainbow 12s ease infinite;
+}
+
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }

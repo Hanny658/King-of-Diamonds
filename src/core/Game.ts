@@ -93,7 +93,12 @@ export class Game {
 
         // 4) apply damage if we have a winner this round
         if (winnerId !== null) {
-            for (const pl of alive) if (pl.id !== winnerId) pl.loseHP(1);
+            const tInt = Math.round(target);
+            const winnerChoice = choices.find(c => c.playerId === winnerId && c.value >= 0)?.value;
+            const perfectHit = winnerChoice !== undefined && winnerChoice === tInt;
+            const dmg = perfectHit ? 2 : 1;
+
+            for (const pl of alive) if (pl.id !== winnerId) pl.loseHP(dmg);
         }
 
         const round: RoundData = {

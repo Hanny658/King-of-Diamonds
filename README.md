@@ -20,7 +20,8 @@ Target = (Average of all chosen numbers) × 0.8
 3. The player whose number is **closest to Target** is safe.  
 All other players lose **1 HP**.
 4. If all players choose the same number, **everyone loses HP**.
-5. If multiple players tie for closest, they are ignored and the next closest single winner is found.
+5. For a perfect hit, damage will be doubled.
+6. If multiple players tie for closest, they are ignored and the next closest single winner is found.
 
 **Last player standing wins**.
 
