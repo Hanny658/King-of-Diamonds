@@ -251,6 +251,7 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
     () => players.map(p => ({ id: p.id, name: p.name, kind: p.kind, hp: p.hp })),
     [players, tick]
   );
+  const roundsDesc = useMemo(() => [...record.rounds].reverse(), [record.rounds.length, tick]);
 
   // find the human (if any) and readiness (must have a pending choice)
   const human = players.find(p => p.kind === 'Human') as HumanPlayer | undefined;
@@ -262,7 +263,7 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
   }
 
   return (
-    <div className="min-h-screen w-srceen bg-slate-900 text-slate-100 p-6">
+    <div className="min-h-screen w-srceen bg-slate-900 text-slate-100 p-6 relative">
       <div className="w-full mx-auto space-y-6 overflow-y-auto">
         <header className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">King of Diamonds — Match</h2>
@@ -328,7 +329,7 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-2">Rounds</h2>
+          <h2 className="text-lg font-semibold mb-2">Past Rounds <b className="text-sm !text-gray-300/60">(Newest on top)</b></h2>
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead>
@@ -341,7 +342,7 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
                 </tr>
               </thead>
               <tbody>
-                {record.rounds.map(r => (
+                {roundsDesc.map(r => (
                   <tr key={r.roundNumber} className="odd:bg-slate-800/50 align-top">
                     <td className="px-3 py-2">{r.roundNumber}</td>
                     <td className="px-3 py-2">{r.average.toFixed(2)}</td>
@@ -368,8 +369,21 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
         </section>
 
         <footer className="text-xs text-slate-400">
-          Rules: all-same ⇒ all lose 1 HP. Tie for closest ⇒ discard that group; search outward for a unique closest winner.
+          Winner will be highlighted, a perfect-hit winner will be rainbow-highlighted.
         </footer>
+      </div>
+      <div className="fixed bottom-4 right-4">
+        <GameInfoModal
+          players={players}
+          allKinds={ALL_KINDS}
+          settings={{
+            minPlayers: 3,
+            maxPlayers: 24,
+            initialHP: 10,
+            numberRange: [0, 100],
+            singletonKinds: SINGLETON_KINDS,
+          }}
+        />
       </div>
     </div>
   );

@@ -15,10 +15,12 @@ type Props = {
     players: IPlayer[];
     allKinds: Personality[];        // ALL_KINDS
     settings: Settings;
+    hideKinds?: boolean;
 };
 
-export function GameInfoModal({ players, allKinds, settings }: Props) {
+export function GameInfoModal({ players, allKinds, settings, hideKinds = true }: Props) {
     const [open, setOpen] = useState(false);
+    const [hideRosteredKinds, setHideRosteredKinds] = useState(hideKinds);
 
     const rosterByKind = useMemo(() => {
         const m = new Map<string, number>();
@@ -50,10 +52,10 @@ export function GameInfoModal({ players, allKinds, settings }: Props) {
                                 </h3>
                                 <button
                                     onClick={() => setOpen(false)}
-                                    className="px-2 py-1 rounded hover:bg-slate-700"
+                                    className="p-0.5 text-2xl rounded !bg-transparent text-gray-100 hover:text-gray-400"
                                     aria-label="Close"
                                 >
-                                    ✕
+                                    <i class="bi bi-x-lg"></i>
                                 </button>
                             </div>
 
@@ -71,13 +73,24 @@ export function GameInfoModal({ players, allKinds, settings }: Props) {
 
                                     {players.length > 0 && (
                                         <div className="mt-3">
-                                            <div className="text-slate-400 mb-1">Roster by type:</div>
+                                            <div className="text-slate-400 mb-1">Roster by type:
+                                                <button
+                                                    onClick={() => setHideRosteredKinds(v => !v)}
+                                                    className="ml-1 p-0.5 !bg-transparent border-0 text-slate-400 hover:text-slate-200"
+                                                    title={hideRosteredKinds ? 'Show types' : 'Hide types'}
+                                                >
+                                                    {hideRosteredKinds
+                                                        ? <i class="bi bi-eye-slash-fill"></i>
+                                                        : <i class="bi bi-eye-fill"></i>}
+                                                </button>
+                                            </div>
                                             <div className="flex flex-wrap gap-2">
-                                                {rosterByKind.map(([k, n]) => (
-                                                    <span key={k} className="px-2 py-1 rounded bg-slate-800 border border-slate-700">
-                                                        {k}: <span className="font-mono">{n}</span>
-                                                    </span>
-                                                ))}
+                                                {hideRosteredKinds == false &&
+                                                    rosterByKind.map(([k, n]) => (
+                                                        <span key={k} className="px-2 rounded !text-gray-400 !bg-slate-800 border !border-slate-700">
+                                                            {k}: <span className="font-mono">{n}</span>
+                                                        </span>
+                                                    ))}
                                             </div>
                                         </div>
                                     )}
@@ -188,9 +201,9 @@ export function GameInfoModal({ players, allKinds, settings }: Props) {
                             <div className="px-4 py-3 bg-slate-800 border-t border-slate-700 flex justify-end">
                                 <button
                                     onClick={() => setOpen(false)}
-                                    className="px-3 py-1.5 rounded bg-slate-700 hover:bg-slate-600"
+                                    className="px-3 py-1.5 rounded !text-white !bg-slate-700 hover:!bg-slate-600"
                                 >
-                                    Close
+                                    Got it
                                 </button>
                             </div>
                         </div>

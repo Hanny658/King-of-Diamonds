@@ -74,21 +74,19 @@ export function HumanChoiceSelector({ players, onPick, round }: Props) {
                                 </h3>
                                 <button
                                     onClick={() => setOpen(false)}
-                                    className="p-0 text-2xl text-white !bg-transparent"
+                                    className="p-0 text-2xl text-white hover:text-gray-200 !bg-transparent"
                                     aria-label="Close"
                                 >
-                                    ✕
+                                    <i class="bi bi-x-lg"></i>
                                 </button>
                             </div>
 
                             {/* Body */}
                             <div className="p-4 sm:p-5 overflow-auto">
-                                {selection != -1 &&
-                                <div className="mb-1 p-2 flex justify-center text-8xl !bg-gray-400 !border-2 
-                                            !border-black !text-black">
-                                    {selection}
+                                <div className={`mb-1 p-2 flex justify-center text-8xl !bg-gray-400 !border-2 
+                                            !border-black ${selection == -1 ? "!text-transparent" : "!text-black"}`}>
+                                    {selection == -1 ? "?" : selection}
                                 </div>
-                                }
                                 {/* Row 0 right-aligned */}
                                 <div className="mb-0 flex justify-end">
                                     <NumberTile n={0} onClick={choose} />
@@ -109,7 +107,7 @@ export function HumanChoiceSelector({ players, onPick, round }: Props) {
                             </div>
 
                             <div className="px-4 py-3 bg-slate-800 border-t border-slate-700 text-xs text-slate-300 flex items-center justify-between">
-                                <span>Click a square to submit your choice for this round.</span>
+                                <span>Click a square at your choice for this round.</span>
                                 <button
                                     onClick={submit}
                                     disabled={selection == -1}
