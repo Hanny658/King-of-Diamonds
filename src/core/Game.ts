@@ -2,6 +2,7 @@ import type { IPlayer } from '../models/IPlayer';
 import { GameRecord } from './GameRecord';
 import type { Choice, RoundData } from '../models/types';
 import { computeAverage, computeTarget } from '../utils/math';
+import { HumanPlayer } from '../models/players/HumanPlayer';
 
 export class Game {
     players!: IPlayer[];
@@ -15,6 +16,12 @@ export class Game {
             // @ts-ignore
             p.__opponents = this.players.filter(q => q.id !== p.id);
         }
+    }
+
+    allHumansReady(): boolean {
+    return this.players
+        .filter(p => p.kind === 'Human')
+        .every(p => (p as HumanPlayer).hasPendingChoice());
     }
 
     playRound(): RoundData {

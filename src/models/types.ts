@@ -8,6 +8,7 @@ export type RoundData = {
 };
 
 export type Personality =
+    | 'Human'
     | 'Rational'
     | 'SwingRational'
     | 'Saboteur'

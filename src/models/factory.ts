@@ -12,11 +12,11 @@ import { Kuzuryu } from './players/Kuzuryu';
 
 export const ALL_KINDS: Personality[] = [
     'Rational', 'SwingRational', 'Saboteur', 'Quitter', 'Copycat',
-    'Smooth', 'Gambler', 'Mathematician', 'Kuzuryu'
+    'Smooth', 'Gambler', 'Mathematician', 'Kuzuryu', 'Human'
 ];
 
 export const SINGLETON_KINDS: Personality[] = [
-    'Kuzuryu'
+    'Kuzuryu', 'Human'
 ];
 
 export function createPlayer(kind: Personality, id: number, name: string): IPlayer {

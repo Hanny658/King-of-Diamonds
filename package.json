@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
+    "bootstrap-icons": "^1.13.1",
     "preact": "^10.27.0",
     "tailwindcss": "^4.1.11",
     "unique-names-generator": "^4.7.1"

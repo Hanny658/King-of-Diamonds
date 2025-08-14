@@ -84,7 +84,7 @@ export default function App() {
     });
 
     // 3) build IPlayer instances
-    const instances: IPlayer[] = finalized.map((e, idx) =>
+    const instances: IPlayer[] = finalized.map((e/*, idx*/) =>
       createPlayer(e.kind as Personality, e.id, e.name)
     );
 
