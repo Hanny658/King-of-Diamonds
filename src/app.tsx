@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
+import './app.css'
 import { Game } from './core/Game';
 import { GameRecord } from './core/GameRecord';
 import type { IPlayer } from './models/IPlayer';
 import type { Personality } from './models/types';
 import { ALL_KINDS, SINGLETON_KINDS, createPlayer } from './models/factory';
 import { makeShortName } from './utils/names';
-import { GameInfoModal } from './components/GameInfoModal';
+import { GameInfoModal } from './components/RulesModal';
 import { HumanPlayer } from './models/players/HumanPlayer';
 import { HumanChoiceSelector } from './components/HumanChoiceSelector';
 
@@ -117,17 +118,28 @@ export default function App() {
   // -------------- RENDER --------------
   if (stage === 'setup') {
     return (
-      <div className="min-h-screen bg-slate-900 text-slate-100 p-6">
-        <div className="max-w-5xl mx-auto space-y-6">
+      <div className="!h-screen !w-srceen bg-slate-900 text-slate-100 p-6">
+        <div className="w-full mx-auto space-y-6">
           <header className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">King of Diamonds — Setup</h1>
+            <h1 className="text-xl font-bold mr-2">King of Diamonds</h1>
             <div className="space-x-2">
-              <button onClick={addBot} className="px-3 py-1.5 bg-indigo-600 rounded hover:bg-indigo-500">
+              <button onClick={addBot} className="px-3 py-1.5 !bg-indigo-600 rounded hover:!bg-indigo-500">
                 Add Bot
               </button>
-              <button onClick={startGame} className="px-3 py-1.5 bg-emerald-600 rounded hover:bg-emerald-500">
+              <button onClick={startGame} className="px-3 py-1.5 !bg-emerald-600 rounded hover:!bg-emerald-500">
                 Start Game
               </button>
+              <GameInfoModal
+                players={players}
+                allKinds={ALL_KINDS}
+                settings={{
+                  minPlayers: 3,
+                  maxPlayers: 24,
+                  initialHP: 10,
+                  numberRange: [0, 100],
+                  singletonKinds: SINGLETON_KINDS,
+                }}
+              />
             </div>
           </header>
 
@@ -189,8 +201,8 @@ export default function App() {
   if (stage === 'finished' && game?.matchWinner) {
     const w = game.matchWinner;
     return (
-      <div className="min-h-screen bg-slate-900 text-slate-100 p-6 flex items-center justify-center">
-        <div className="w-[min(640px,94vw)] rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl p-6 kd-animate-in">
+      <div className="h-screen w-srceen bg-slate-900 text-slate-100 p-6 flex items-center justify-center">
+        <div className="w-full rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl p-6 kd-animate-in">
           <h1 className="text-2xl font-bold mb-4">Match Finished</h1>
           <div className="space-y-2">
             <div><span className="text-slate-400">Winner:</span> <span className="font-semibold">{w.name}</span></div>
@@ -202,7 +214,7 @@ export default function App() {
               onClick={backToSetup}
               className="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500"
             >
-              Reset & Back to Setup
+              Start a New Round
             </button>
           </div>
         </div>
@@ -227,36 +239,24 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="h-screen w-srceen bg-slate-900 text-slate-100 p-6">
+      <div className="w-full mx-auto space-y-6">
         <header className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">King of Diamonds — Match</h1>
-
-          <GameInfoModal
-            players={players}
-            allKinds={ALL_KINDS}
-            settings={{
-              minPlayers: 3,
-              maxPlayers: 24,
-              initialHP: 10,
-              numberRange: [0, 100],
-              singletonKinds: SINGLETON_KINDS,
-            }}
-          />
           <div className="flex items-center gap-2">
             {human && (
               <HumanChoiceSelector players={players} onPick={submitHumanChoice} />
             )}
+            <button onClick={backToSetup} className="px-3 py-1.5 !bg-slate-700 rounded hover:!bg-slate-600">
+              End & Back to Setup
+            </button>
             <button
               onClick={playOne}
               disabled={!humanReady}
-              className={`px-3 py-1.5 rounded ${humanReady ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-slate-700 text-slate-400 cursor-not-allowed'}`}
+              className={`px-3 py-1.5 rounded ${humanReady ? '!bg-emerald-600 hover:!bg-emerald-500' : '!bg-slate-700 !text-slate-400 cursor-not-allowed'}`}
               title={human && !humanReady ? 'Pick your number first' : ''}
             >
-              Play 1 Round
-            </button>
-            <button onClick={backToSetup} className="px-3 py-1.5 bg-slate-700 rounded hover:bg-slate-600">
-              End & Back to Setup
+              Play Round
             </button>
           </div>
         </header>
