@@ -7,14 +7,16 @@ import { clamp, roundInt } from '../utils/math';
 type Props = {
     players: IPlayer[];
     onPick: (value: number) => void;
+    round: number;
 };
 
-export function HumanChoiceSelector({ players, onPick }: Props) {
+export function HumanChoiceSelector({ players, onPick, round }: Props) {
     const human = useMemo(
         () => players.find(p => p.kind === 'Human') as HumanPlayer | undefined,
         [players]
     );
     const [open, setOpen] = useState(false);
+    const [selection, setSelection] = useState<number>(-1);
     if (!human) return null;
 
     // lock body scroll while modal is open
@@ -26,9 +28,24 @@ export function HumanChoiceSelector({ players, onPick }: Props) {
         }
     }, [open]);
 
-    const choose = (n: number) => {
-        onPick(clamp(roundInt(n), 0, 100));
+    useEffect(() => {
+        setSelection(-1);
         setOpen(false);
+    }, [round]);
+
+    const submit = () => {
+        if (selection == -1) return;
+        onPick(clamp(roundInt(selection), 0, 100));
+        setOpen(false);
+    };
+
+    const choose = (n: number) => {
+        if (selection == n) {
+            // Double click to submit
+            submit();
+            return;
+        }
+        setSelection(n);
     };
 
     return (
@@ -66,8 +83,14 @@ export function HumanChoiceSelector({ players, onPick }: Props) {
 
                             {/* Body */}
                             <div className="p-4 sm:p-5 overflow-auto">
+                                {selection != -1 &&
+                                <div className="mb-1 p-2 flex justify-center text-8xl !bg-gray-400 !border-2 
+                                            !border-black !text-black">
+                                    {selection}
+                                </div>
+                                }
                                 {/* Row 0 right-aligned */}
-                                <div className="mb-3 flex justify-end">
+                                <div className="mb-0 flex justify-end">
                                     <NumberTile n={0} onClick={choose} />
                                 </div>
                                 {/* 1–100 in tens */}
@@ -85,8 +108,18 @@ export function HumanChoiceSelector({ players, onPick }: Props) {
                                 </div>
                             </div>
 
-                            <div className="px-4 py-3 bg-slate-800 border-t border-slate-700 text-xs text-slate-300">
-                                Click a square to submit your choice for this round.
+                            <div className="px-4 py-3 bg-slate-800 border-t border-slate-700 text-xs text-slate-300 flex items-center justify-between">
+                                <span>Click a square to submit your choice for this round.</span>
+                                <button
+                                    onClick={submit}
+                                    disabled={selection == -1}
+                                    className={`ml-4 px-3 py-1.5 w-1/4 rounded text-2xl ${selection == -1
+                                            ? '!bg-slate-600 !text-slate-400 cursor-not-allowed'
+                                            : '!bg-emerald-600 !text-white hover:!bg-emerald-500'
+                                        }`}
+                                >
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -102,7 +135,7 @@ function NumberTile({ n, onClick }: { n: number; onClick: (n: number) => void })
     return (
         <button
             onClick={() => onClick(n)}
-            className="w-[10%] h-10 !bg-slate-800 hover:!bg-emerald-600 active:scale-[0.98] transition
+            className="w-[10%] h-10 !bg-slate-800 hover:!bg-emerald-600 active:scale-[0.98] transition !rounded-none focus:border-0
                         border !border-slate-700 hover:!border-emerald-400 !text-slate-100 font-mono text-sm sm:text-base"
             title={`${n}`}
         >

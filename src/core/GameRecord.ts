@@ -13,6 +13,8 @@ export class GameRecord {
 
     reset() { this.rounds = []; }
 
+    currRound() { return this.rounds.length }
+
     addRound(r: RoundData) { this.rounds.push(r); }
 
     get lastRound(): RoundData | null { return this.rounds.length ? this.rounds[this.rounds.length - 1] : null; }

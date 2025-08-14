@@ -29,14 +29,14 @@ function randomAssignableKind(taken: Set<Personality>): Personality {
 // ---------- Component ----------
 export default function App() {
   const [stage, setStage] = useState<'setup' | 'playing' | 'finished'>('setup');
-  const [roster, setRoster] = useState<RosterEntry[]>(() => {
-    // start with 3 players
-    return Array.from({ length: 3 }).map((_, i) => ({
-      id: i + 1,
-      name: makeShortName(),
-      kind: null,
-    }));
-  });
+const [roster, setRoster] = useState<RosterEntry[]>(() => {
+  return Array.from({ length: 3 }).map((_, i) => ({
+    id: i + 1,
+    name: i === 0 ? "You" : makeShortName(),
+    kind: i === 0 ? "Human" : null, // 假设 Human 是 Personality 类型里的一个值
+  }));
+});
+
 
   const [players, setPlayers] = useState<IPlayer[]>([]);
   const [game, setGame] = useState<Game | null>(null);
@@ -72,6 +72,15 @@ export default function App() {
     setRoster(r =>
       r.map(e => (e.id === id ? { ...e, name } : e))
     );
+  }
+
+  function removePlayer(id: number) {
+    // 如果希望最少保留 3 人，可加这段保护
+    if (stage === 'setup' && roster.length <= 3) {
+      alert('至少需要 3 名玩家才能开始游戏，无法再删除。');
+      return;
+    }
+    setRoster(r => r.filter(e => e.id !== id));
   }
 
   function startGame() {
@@ -151,7 +160,8 @@ export default function App() {
                   <tr className="bg-slate-800">
                     <th className="text-left px-3 py-2">ID</th>
                     <th className="text-left px-3 py-2">Name</th>
-                    <th className="text-left px-3 py-2">AI</th>
+                    <th className="text-left px-3 py-2">Character</th>
+                    <th className="text-left px-3 py-2">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -183,11 +193,22 @@ export default function App() {
                           })}
                         </select>
                       </td>
+                      <td className="px-3 py-2">
+                        <button
+                          onClick={() => removePlayer(r.id)}
+                          className="!bg-transparent !text-red-800/80 disabled:!text-slate-400/80"
+                          disabled={roster.length <= 3}
+                          // Minimal to start : 3 players
+                          title="Delete this player"
+                        >
+                          <i class="bi text-2xl bi-person-fill-dash"></i>
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="text-xs !text-slate-400 mt-2">
                 Kuzuryu are limited to one instance per game. Unassigned AIs will be randomized on start.
               </p>
             </div>
@@ -244,12 +265,12 @@ export default function App() {
         <header className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">King of Diamonds — Match</h1>
           <div className="flex items-center gap-2">
-            {human && (
-              <HumanChoiceSelector players={players} onPick={submitHumanChoice} />
-            )}
             <button onClick={backToSetup} className="px-3 py-1.5 !bg-slate-700 rounded hover:!bg-slate-600">
-              End & Back to Setup
+              Restart
             </button>
+            {human && (
+              <HumanChoiceSelector players={players} onPick={submitHumanChoice} round={record.currRound()} /*Use tick here as substitution to round*/ />
+            )}
             <button
               onClick={playOne}
               disabled={!humanReady}
