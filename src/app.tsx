@@ -5,6 +5,9 @@ import type { IPlayer } from './models/IPlayer';
 import type { Personality } from './models/types';
 import { ALL_KINDS, SINGLETON_KINDS, createPlayer } from './models/factory';
 import { makeShortName } from './utils/names';
+import { GameInfoModal } from './components/GameInfoModal';
+import { HumanPlayer } from './models/players/HumanPlayer';
+import { HumanChoiceSelector } from './components/HumanChoiceSelector';
 
 // ---------- Types ----------
 type RosterEntry = {
@@ -24,7 +27,7 @@ function randomAssignableKind(taken: Set<Personality>): Personality {
 
 // ---------- Component ----------
 export default function App() {
-  const [stage, setStage] = useState<'setup' | 'playing'>('setup');
+  const [stage, setStage] = useState<'setup' | 'playing' | 'finished'>('setup');
   const [roster, setRoster] = useState<RosterEntry[]>(() => {
     // start with 3 players
     return Array.from({ length: 3 }).map((_, i) => ({
@@ -108,6 +111,7 @@ export default function App() {
     if (!game) return;
     game.playRound();
     setTick(t => t + 1);
+    if (game.matchWinner) setStage('finished');
   }
 
   // -------------- RENDER --------------
@@ -181,6 +185,31 @@ export default function App() {
     );
   }
 
+  // Finished stage
+  if (stage === 'finished' && game?.matchWinner) {
+    const w = game.matchWinner;
+    return (
+      <div className="min-h-screen bg-slate-900 text-slate-100 p-6 flex items-center justify-center">
+        <div className="w-[min(640px,94vw)] rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl p-6 kd-animate-in">
+          <h1 className="text-2xl font-bold mb-4">Match Finished</h1>
+          <div className="space-y-2">
+            <div><span className="text-slate-400">Winner:</span> <span className="font-semibold">{w.name}</span></div>
+            <div><span className="text-slate-400">Type:</span> <span className="font-mono">{w.kind}</span></div>
+            <div><span className="text-slate-400">Final HP:</span> <span className="font-mono">{w.hp}</span></div>
+          </div>
+          <div className="mt-6 flex gap-2">
+            <button
+              onClick={backToSetup}
+              className="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500"
+            >
+              Reset & Back to Setup
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // playing stage
   const record = GameRecord.instance;
   const alive = useMemo(
@@ -188,13 +217,42 @@ export default function App() {
     [players, tick]
   );
 
+  // find the human (if any) and readiness (must have a pending choice)
+  const human = players.find(p => p.kind === 'Human') as HumanPlayer | undefined;
+  const humanReady = !human || human.hasPendingChoice();
+
+  function submitHumanChoice(value: number) {
+    if (human) human.setPendingChoice(value);
+    setTick(t => t + 1);
+  }
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         <header className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">King of Diamonds — Match</h1>
-          <div className="space-x-2">
-            <button onClick={playOne} className="px-3 py-1.5 bg-emerald-600 rounded hover:bg-emerald-500">
+
+          <GameInfoModal
+            players={players}
+            allKinds={ALL_KINDS}
+            settings={{
+              minPlayers: 3,
+              maxPlayers: 24,
+              initialHP: 10,
+              numberRange: [0, 100],
+              singletonKinds: SINGLETON_KINDS,
+            }}
+          />
+          <div className="flex items-center gap-2">
+            {human && (
+              <HumanChoiceSelector players={players} onPick={submitHumanChoice} />
+            )}
+            <button
+              onClick={playOne}
+              disabled={!humanReady}
+              className={`px-3 py-1.5 rounded ${humanReady ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-slate-700 text-slate-400 cursor-not-allowed'}`}
+              title={human && !humanReady ? 'Pick your number first' : ''}
+            >
               Play 1 Round
             </button>
             <button onClick={backToSetup} className="px-3 py-1.5 bg-slate-700 rounded hover:bg-slate-600">
@@ -253,7 +311,7 @@ export default function App() {
                       <div className="flex flex-wrap gap-2">
                         {r.choices.map(c => (
                           <span key={`${r.roundNumber}-${c.playerId}`} className="inline-flex items-center px-2 py-0.5 rounded bg-slate-700">
-                            P{c.playerId}:{c.value}&nbsp;
+                            P{c.playerId}:{c.value < 0 ? '—' : c.value} &nbsp;
                           </span>
                         ))}
                       </div>

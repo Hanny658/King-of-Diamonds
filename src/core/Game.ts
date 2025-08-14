@@ -2,63 +2,98 @@ import type { IPlayer } from '../models/IPlayer';
 import { GameRecord } from './GameRecord';
 import type { Choice, RoundData } from '../models/types';
 import { computeAverage, computeTarget } from '../utils/math';
-import { HumanPlayer } from '../models/players/HumanPlayer';
+
+export type WinnerInfo = { id: number; name: string; kind: string; hp: number };
 
 export class Game {
-    players!: IPlayer[];
+    public players: IPlayer[];
+    public matchWinner: WinnerInfo | null = null;
+
     constructor(players: IPlayer[]) {
         this.players = players;
     }
 
+    /** opponents visible to predictors should exclude dead players */
     injectOpponentsForPredictors() {
-        // Provide opponents to Kuzuryu
         for (const p of this.players) {
             // @ts-ignore
-            p.__opponents = this.players.filter(q => q.id !== p.id);
+            p.__opponents = this.players.filter(q => q.id !== p.id && q.hp > 0);
         }
     }
 
-    allHumansReady(): boolean {
-    return this.players
-        .filter(p => p.kind === 'Human')
-        .every(p => (p as HumanPlayer).hasPendingChoice());
+    private alivePlayers(): IPlayer[] {
+        return this.players.filter(p => p.hp > 0);
     }
 
     playRound(): RoundData {
+        if (this.matchWinner) {
+            throw new Error('Match already finished.');
+        }
+
         this.injectOpponentsForPredictors();
 
-        const choices: Choice[] = this.players.map(p => ({ playerId: p.id, value: p.chooseNumber() }));
+        const alive = this.alivePlayers();
+        // 1) collect choices: dead players contribute -1 (not counted in avg/T)
+        const choices: Choice[] = this.players.map(p => {
+            if (p.hp <= 0) return { playerId: p.id, value: -1 };
+            return { playerId: p.id, value: p.chooseNumber() };
+        });
 
-        // All same → all lose 1 HP
-        const allSame = choices.every(c => c.value === choices[0].value);
-        const avg = computeAverage(choices.map(c => c.value));
+        const aliveValues = choices.filter(c => c.value >= 0).map(c => c.value);
+        const allSameAlive = aliveValues.length > 0 && aliveValues.every(v => v === aliveValues[0]);
+
+        // 2) compute avg/T using only alive choices
+        const avg = computeAverage(aliveValues);
         const target = computeTarget(avg);
 
+        // 3) resolve winner per rules
         let winnerId: number | null = null;
 
-        if (allSame) {
-            for (const pl of this.players) pl.loseHP(1);
-        } else {
-            // Find unique closest per rules: if tie for closest, discard the whole group and search outward
-            // We do this by grouping by absolute distance and picking the smallest distance bucket with size 1.
-            const distances = choices.map(c => ({ id: c.playerId, d: Math.abs(c.value - target) }));
-            // Sort by distance asc
-            distances.sort((a, b) => a.d - b.d);
-            // Find first distance that occurs exactly once (within eps tolerance)
-            const eps = 1e-9;
-            const groups: { d: number; ids: number[] }[] = [];
-            for (const item of distances) {
-                const g = groups.find(G => Math.abs(G.d - item.d) <= eps);
-                if (g) g.ids.push(item.id); else groups.push({ d: item.d, ids: [item.id] });
+        if (alive.length <= 1) {
+            // Corner: nothing to play
+            winnerId = alive[0]?.id ?? null;
+        } else if (alive.length === 2) {
+            // Special rule: if picks are 0 and 100 (order irrelevant), 100 wins
+            const pair = choices.filter(c => c.value >= 0);
+            const vals = pair.map(p => p.value).sort((a, b) => a - b);
+            if (vals[0] === 0 && vals[1] === 100) {
+                const hundred = pair.find(p => p.value === 100)!;
+                winnerId = hundred.playerId;
             }
-            const uniqueGroup = groups.find(g => g.ids.length === 1);
-            if (uniqueGroup) {
-                winnerId = uniqueGroup.ids[0];
-                for (const pl of this.players) if (pl.id !== winnerId) pl.loseHP(1);
+        }
+
+        if (winnerId === null) {
+            if (allSameAlive) {
+                // All alive picked same → all alive lose 1 HP
+                for (const pl of alive) pl.loseHP(1);
             } else {
-                // Degenerate (should be rare): if every ring ties, treat as all lose 1 to keep game moving.
-                for (const pl of this.players) pl.loseHP(1);
+                // Unique-closest with tie-discard rings (consider only alive for distances)
+                const aliveDistances = choices
+                    .filter(c => c.value >= 0)
+                    .map(c => ({ id: c.playerId, d: Math.abs(c.value - target) }))
+                    .sort((a, b) => a.d - b.d);
+
+                // group by distance (eps)
+                const eps = 1e-9;
+                const groups: { d: number; ids: number[] }[] = [];
+                for (const item of aliveDistances) {
+                    const g = groups.find(G => Math.abs(G.d - item.d) <= eps);
+                    if (g) g.ids.push(item.id);
+                    else groups.push({ d: item.d, ids: [item.id] });
+                }
+                const uniqueGroup = groups.find(g => g.ids.length === 1);
+                if (uniqueGroup) {
+                    winnerId = uniqueGroup.ids[0];
+                } else {
+                    // degenerate: every ring ties → treat as all alive lose 1
+                    for (const pl of alive) pl.loseHP(1);
+                }
             }
+        }
+
+        // 4) apply damage if we have a winner this round
+        if (winnerId !== null) {
+            for (const pl of alive) if (pl.id !== winnerId) pl.loseHP(1);
         }
 
         const round: RoundData = {
@@ -70,7 +105,17 @@ export class Game {
         };
         GameRecord.instance.addRound(round);
 
-        // Notify players (optional)
+        // 5) check match end: if only one alive remains → record matchWinner
+        const aliveAfter = this.alivePlayers();
+        if (aliveAfter.length === 1) {
+            const w = aliveAfter[0];
+            this.matchWinner = { id: w.id, name: w.name, kind: w.kind, hp: w.hp };
+        } else if (aliveAfter.length === 0) {
+            // rare: everyone died simultaneously; choose no winner (or pick last-round winner if you prefer)
+            this.matchWinner = null;
+        }
+
+        // 6) post hooks
         for (const p of this.players) p.onRoundEnd?.(round);
 
         return round;

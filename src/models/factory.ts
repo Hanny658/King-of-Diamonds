@@ -9,6 +9,7 @@ import { SmoothPlayer } from './players/SmoothPlayer';
 import { Mathematician } from './players/Mathematician';
 import { GamblerPlayer } from './players/GamblerPlayer';
 import { Kuzuryu } from './players/Kuzuryu';
+import { HumanPlayer } from './players/HumanPlayer';
 
 export const ALL_KINDS: Personality[] = [
     'Rational', 'SwingRational', 'Saboteur', 'Quitter', 'Copycat',
@@ -21,6 +22,7 @@ export const SINGLETON_KINDS: Personality[] = [
 
 export function createPlayer(kind: Personality, id: number, name: string): IPlayer {
     switch (kind) {
+        case 'Human': return new HumanPlayer(id, name, kind);
         case 'Rational': return new RationalPlayer(id, name, kind);
         case 'SwingRational': return new SwingRationalPlayer(id, name, kind);
         case 'Saboteur': return new SaboteurPlayer(id, name, kind);
