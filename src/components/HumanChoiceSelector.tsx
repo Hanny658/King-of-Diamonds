@@ -57,7 +57,7 @@ export function HumanChoiceSelector({ players, onPick }: Props) {
                                 </h3>
                                 <button
                                     onClick={() => setOpen(false)}
-                                    className="px-2 py-1 rounded hover:bg-slate-700"
+                                    className="p-0 text-2xl text-white !bg-transparent"
                                     aria-label="Close"
                                 >
                                     ✕

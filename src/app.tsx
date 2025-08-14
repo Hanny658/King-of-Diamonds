@@ -118,7 +118,7 @@ export default function App() {
   // -------------- RENDER --------------
   if (stage === 'setup') {
     return (
-      <div className="!h-screen !w-srceen bg-slate-900 text-slate-100 p-6">
+      <div className="!min-h-screen !w-srceen bg-slate-900 text-slate-100 p-6">
         <div className="w-full mx-auto space-y-6">
           <header className="flex items-center justify-between">
             <h1 className="text-xl font-bold mr-2">King of Diamonds</h1>
@@ -212,7 +212,7 @@ export default function App() {
           <div className="mt-6 flex gap-2">
             <button
               onClick={backToSetup}
-              className="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500"
+              className="w-full px-3 py-1.5 rounded !bg-emerald-600 hover:!bg-emerald-500"
             >
               Start a New Round
             </button>
@@ -239,8 +239,8 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen w-srceen bg-slate-900 text-slate-100 p-6">
-      <div className="w-full mx-auto space-y-6">
+    <div className="min-h-screen w-srceen bg-slate-900 text-slate-100 p-6">
+      <div className="w-full mx-auto space-y-6 overflow-y-auto">
         <header className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">King of Diamonds — Match</h1>
           <div className="flex items-center gap-2">
