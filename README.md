@@ -63,8 +63,8 @@ The game features multiple AI strategies (precisely we call it algorithms), each
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/king-of-diamonds.git
-cd king-of-diamonds
+git clone https://github.com/Hanny658/King-of-Diamonds.git
+cd King-of-Diamonds
 ````
 
 ### 2. Install dependencies
@@ -86,12 +86,7 @@ Then open `http://localhost:5173` in your browser.
 ```bash
 npm run build
 ```
-
-### 5. Preview production build
-
-```bash
-npm run preview
-```
+This will build static files into dist/, then you can test with serve.
 
 ---
 
@@ -104,4 +99,4 @@ You can try the game here:
 
 ## 📜 License
 
-Apache 2.0 License © 2025 Hanny Zhang
+Apache-2.0 License © 2025 Hanny Zhang
