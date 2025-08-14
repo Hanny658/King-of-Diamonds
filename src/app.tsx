@@ -41,6 +41,7 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
   const [players, setPlayers] = useState<IPlayer[]>([]);
   const [game, setGame] = useState<Game | null>(null);
   const [tick, setTick] = useState(0);
+  const [showKinds, setShowKinds] = useState(false);
 
   useEffect(() => {
     if (stage === 'playing' && game) {
@@ -130,7 +131,7 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
       <div className="!min-h-screen !w-srceen bg-slate-900 text-slate-100 p-6">
         <div className="w-full mx-auto space-y-6">
           <header className="flex items-center justify-between">
-            <h1 className="text-xl font-bold mr-2">King of Diamonds</h1>
+            <h2 className="!text-4xl font-bold mr-2">King of Diamonds</h2>
             <div className="space-x-2">
               <button onClick={addBot} className="px-3 py-1.5 !bg-indigo-600 rounded hover:!bg-indigo-500">
                 Add Bot
@@ -225,6 +226,7 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
       <div className="h-screen w-srceen bg-slate-900 text-slate-100 p-6 flex items-center justify-center">
         <div className="w-full rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl p-6 kd-animate-in">
           <h1 className="text-2xl font-bold mb-4">Match Finished</h1>
+          <i class="bi text-3xl bi-emoji-sunglasses"></i>
           <div className="space-y-2">
             <div><span className="text-slate-400">Winner:</span> <span className="font-semibold">{w.name}</span></div>
             <div><span className="text-slate-400">Type:</span> <span className="font-mono">{w.kind}</span></div>
@@ -263,7 +265,7 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
     <div className="min-h-screen w-srceen bg-slate-900 text-slate-100 p-6">
       <div className="w-full mx-auto space-y-6 overflow-y-auto">
         <header className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">King of Diamonds — Match</h1>
+          <h2 className="text-2xl font-bold">King of Diamonds — Match</h2>
           <div className="flex items-center gap-2">
             <button onClick={backToSetup} className="px-3 py-1.5 !bg-slate-700 rounded hover:!bg-slate-600">
               Restart
@@ -290,7 +292,18 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
                 <tr className="bg-slate-800">
                   <th className="text-left px-3 py-2">ID</th>
                   <th className="text-left px-3 py-2">Name</th>
-                  <th className="text-left px-3 py-2">Kind</th>
+                  <th className="text-left px-3 py-2">
+                    Kind
+                    <button
+                      onClick={() => setShowKinds(v => !v)}
+                      className="ml-1 p-0.5 !bg-transparent border-0 text-slate-400 hover:text-slate-200"
+                      title={showKinds ? 'Hide player types' : 'Show player types'}
+                    >
+                      {showKinds
+                        ? <i class="bi bi-eye-fill"></i>
+                        : <i class="bi bi-eye-slash-fill"></i>}
+                    </button>
+                  </th>
                   <th className="text-left px-3 py-2">HP</th>
                 </tr>
               </thead>
@@ -299,8 +312,14 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
                   <tr key={p.id} className="odd:bg-slate-800/50">
                     <td className="px-3 py-2">{p.id}</td>
                     <td className="px-3 py-2">{p.name}</td>
-                    <td className="px-3 py-2">{p.kind}</td>
-                    <td className="px-3 py-2 font-mono">{p.hp}</td>
+                    <td className={`px-3 py-2 md:min-w-32 ${showKinds ? "text-slate-200" : "!text-slate-400/80 italic"}`}>
+                      {showKinds ? p.kind : '< Hidden >'}
+                    </td>
+                    <td className={`px-3 py-2 font-mono font-black text-xl text-center
+                      ${p.hp>7 ? "!text-green-700" : (p.hp>2 ? "!text-yellow-700" : "text-red-700")}`}>
+                      {p.hp == 0 ? <i class="bi !text-red-800/70 bi-emoji-dizzy"></i> 
+                      : p.hp}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -331,7 +350,9 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
                     <td className="px-3 py-2 font-mono">
                       <div className="flex flex-wrap gap-2">
                         {r.choices.map(c => (
-                          <span key={`${r.roundNumber}-${c.playerId}`} className="inline-flex items-center px-2 py-0.5 rounded bg-slate-700">
+                          <span key={`${r.roundNumber}-${c.playerId}`} 
+                                className={`inline-flex items-center px-2 py-0.5 rounded
+                                ${c.playerId == r.winnerId ? "!bg-amber-500/40" : "bg-slate-700"}`}>
                             P{c.playerId}:{c.value < 0 ? '—' : c.value} &nbsp;
                           </span>
                         ))}

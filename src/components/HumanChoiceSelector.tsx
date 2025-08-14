@@ -125,7 +125,7 @@ export function HumanChoiceSelector({ players, onPick, round }: Props) {
                     </div>
                 </div>,
                 // mount into modal-root if present, else body
-                document.getElementById('modal-root') ?? document.body
+                document.getElementById('root') ?? document.body
             )}
         </>
     );
@@ -136,7 +136,7 @@ function NumberTile({ n, onClick }: { n: number; onClick: (n: number) => void })
         <button
             onClick={() => onClick(n)}
             className="w-[10%] h-10 !bg-slate-800 hover:!bg-emerald-600 active:scale-[0.98] transition !rounded-none focus:border-0
-                        border !border-slate-700 hover:!border-emerald-400 !text-slate-100 font-mono text-sm sm:text-base"
+                        !p-0  border !border-slate-700 hover:!border-emerald-400 !text-slate-100 font-mono text-xs sm:text-base"
             title={`${n}`}
         >
             {n}
