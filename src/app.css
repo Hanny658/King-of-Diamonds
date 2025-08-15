@@ -36,6 +36,21 @@
   animation: kf-fade-scale-in 180ms ease-out forwards;
 }
 
+/* For the records accordion at finished stage */
+.kd-acc {
+  overflow: hidden;
+  transition: max-height 220ms ease, opacity 220ms ease;
+}
+.kd-acc--open  { max-height: 70vh; opacity: 1; }
+.kd-acc--closed{ max-height: 0;    opacity: 0; }
+
+.kd-rot {
+  transition: transform 200ms ease;
+}
+.kd-rot--open {
+  transform: rotate(180deg);
+}
+
 /* Rainbow animation bg (for perfect hits) */
 .rainbow-bg {
   background: linear-gradient(

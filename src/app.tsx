@@ -9,6 +9,7 @@ import { makeShortName } from './utils/names';
 import { GameInfoModal } from './components/RulesModal';
 import { HumanPlayer } from './models/players/HumanPlayer';
 import { HumanChoiceSelector } from './components/HumanChoiceSelector';
+import { RoundsTable } from './components/RoundsTable';
 
 // ---------- Types ----------
 type RosterEntry = {
@@ -42,6 +43,7 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
   const [game, setGame] = useState<Game | null>(null);
   const [tick, setTick] = useState(0);
   const [showKinds, setShowKinds] = useState(false);
+  const [openRec, setOpenRec] = useState(false);
 
   useEffect(() => {
     if (stage === 'playing' && game) {
@@ -222,6 +224,7 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
   // Finished stage
   if (stage === 'finished' && game?.matchWinner) {
     const w = game.matchWinner;
+    const record = GameRecord.instance;
     return (
       <div className="h-screen w-srceen bg-slate-900 text-slate-100 p-6 flex items-center justify-center">
         <div className="w-full rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl p-6 kd-animate-in">
@@ -240,6 +243,22 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
               Start a New Round
             </button>
           </div>
+          <div className="mt-6">
+            <button
+              onClick={() => setOpenRec(v => !v)}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded !bg-transparent !text-sm"
+            >
+              <i class={`bi bi-caret-down kd-rot ${openRec ? 'kd-rot--open' : ''}`}></i>
+              <span>Game Record</span>
+              <i class={`bi bi-caret-down kd-rot ${openRec ? 'kd-rot--open' : ''}`}></i>
+            </button>
+
+            <div className={`kd-acc mt-3 ${openRec ? 'kd-acc--open' : 'kd-acc--closed'}`}>
+              <div className="rounded-lg border border-slate-700 bg-slate-800 p-3">
+                <RoundsTable rounds={record.rounds} />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -251,7 +270,6 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
     () => players.map(p => ({ id: p.id, name: p.name, kind: p.kind, hp: p.hp })),
     [players, tick]
   );
-  const roundsDesc = useMemo(() => [...record.rounds].reverse(), [record.rounds.length, tick]);
 
   // find the human (if any) and readiness (must have a pending choice)
   const human = players.find(p => p.kind === 'Human') as HumanPlayer | undefined;
@@ -329,43 +347,8 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-2">Past Rounds <b className="text-sm !text-gray-300/60">(Newest on top)</b></h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead>
-                <tr className="bg-slate-800">
-                  <th className="text-left px-3 py-2">#</th>
-                  <th className="text-left px-3 py-2">Average</th>
-                  <th className="text-left px-3 py-2">Target (0.8×avg)</th>
-                  <th className="text-left px-3 py-2">Winner</th>
-                  <th className="text-left px-3 py-2">Choices</th>
-                </tr>
-              </thead>
-              <tbody>
-                {roundsDesc.map(r => (
-                  <tr key={r.roundNumber} className="odd:bg-slate-800/50 align-top">
-                    <td className="px-3 py-2">{r.roundNumber}</td>
-                    <td className="px-3 py-2">{r.average.toFixed(2)}</td>
-                    <td className="px-3 py-2">{r.target.toFixed(2)}</td>
-                    <td className="px-3 py-2">{r.winnerId ?? '—'}</td>
-                    <td className="px-3 py-2 font-mono">
-                      <div className="flex flex-wrap gap-2">
-                        {r.choices.map(c => (
-                          <span key={`${r.roundNumber}-${c.playerId}`} 
-                                className={`inline-flex items-center px-2 py-0.5 rounded
-                                ${c.playerId == r.winnerId ? 
-                                  (c.value == Math.round(r.target) ? "rainbow-bg" : "!bg-amber-500/40") 
-                                : "bg-slate-700"}`}>
-                            P{c.playerId}:{c.value < 0 ? '—' : c.value} &nbsp;
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <h2 className="text-lg font-semibold mb-2">Finished Rounds <b className="text-sm !text-gray-300/60">(Newest on top)</b></h2>
+          <RoundsTable rounds={record.rounds} />
         </section>
 
         <footer className="text-xs text-slate-400">
