@@ -1,6 +1,6 @@
 # ♦️King of Diamonds - ⚖️てんびんゲーム
 
-A classic beauty-contest survival game inspired by **mathematical strategy games** and the *King of Diamonds* challenge from *Alice in Borderland* (*今際の国のアリス*).
+A classic beauty-contest survival game inspired by the ***King of Diamonds* challenge** from *Alice in Borderland* (*今際の国のアリス*). With small twists (apply double dmg and same-diff rule to whole game instead of less than 3 players)and various bot player characteristics.
 
 ![Preview Screenshot](public/docs/preview.png)
 
@@ -13,9 +13,7 @@ In **King of Diamonds**, more than 3 players compete in rounds of number selecti
 1. Each player secretly chooses an integer between **0 and 100**.
 2. The system calculates:
 ```
-
 Target = (Average of all chosen numbers) × 0.8
-
 ````
 3. The player whose number is **closest to Target** is safe.  
 All other players lose **1 HP**.
