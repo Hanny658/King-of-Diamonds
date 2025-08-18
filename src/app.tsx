@@ -135,8 +135,8 @@ export default function App() {
         <div className="!min-h-screen !w-srceen bg-slate-900 text-slate-100 p-6">
           <div className="w-full mx-auto space-y-6">
             <header className="flex items-center justify-between">
-              <h2 className="!text-lg !md:text-4xl font-bold mr-2">King of Diamonds</h2>
-              <div className="space-x-2">
+              <h2 className="!text-xl !md:text-4xl font-bold mr-2">King of Diamonds - てんびん</h2>
+              <div className="space-x-2 space-y-0.5">
                 <BGMPlayer />
                 <button onClick={addBot} className="px-3 py-1.5 !bg-indigo-600 rounded hover:!bg-indigo-500">
                   Add Bot
@@ -144,17 +144,6 @@ export default function App() {
                 <button onClick={startGame} className="px-3 py-1.5 !bg-emerald-600 rounded hover:!bg-emerald-500">
                   Start Game
                 </button>
-                <GameInfoModal
-                  players={players}
-                  allKinds={ALL_KINDS}
-                  settings={{
-                    minPlayers: 3,
-                    maxPlayers: 24,
-                    initialHP: 10,
-                    numberRange: [0, 100],
-                    singletonKinds: SINGLETON_KINDS,
-                  }}
-                />
               </div>
             </header>
 
@@ -220,6 +209,19 @@ export default function App() {
               </div>
             </section>
           </div>
+          <div className="fixed bottom-4 right-4">
+            <GameInfoModal
+              players={players}
+              allKinds={ALL_KINDS}
+              settings={{
+                minPlayers: 3,
+                maxPlayers: 24,
+                initialHP: 10,
+                numberRange: [0, 100],
+                singletonKinds: SINGLETON_KINDS,
+              }}
+            />
+          </div>
         </div>
       </BGMProvider>
     );
@@ -258,7 +260,7 @@ export default function App() {
             </button>
 
             <div className={`kd-acc mt-3 ${openRec ? 'kd-acc--open' : 'kd-acc--closed'}`}>
-              <div className="rounded-lg border border-slate-700 bg-slate-800 p-3">
+              <div className="rounded-lg border border-slate-700 bg-slate-800 p-3 max-h-[50vh] overflow-y-auto">
                 <RoundsTable rounds={record.rounds} />
               </div>
             </div>
@@ -290,7 +292,7 @@ export default function App() {
         <div className="w-full mx-auto space-y-6 overflow-y-auto">
           <header className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">King of Diamonds — Match</h2>
-            <div className="flex items-center gap-2">
+            <div className="space-x-2 space-y-0.5 flex-col">
               <BGMPlayer />
               <button onClick={backToSetup} className="px-3 py-1.5 !bg-slate-700 rounded hover:!bg-slate-600">
                 Restart

@@ -14,7 +14,7 @@ export function BGMPlayer() {
     }, [volume]);
 
     return (
-        <div className="inline-flex items-center gap-3">
+        <div className="inline-flex items-center gap-1 align-middle justify-center">
             {/* Toggle play/stop */}
             <button
                 onClick={toggle}
@@ -27,7 +27,7 @@ export function BGMPlayer() {
             </button>
 
             {/* Volume slider */}
-            <div className="inline-flex items-center gap-2">
+            <div className="inline-flex items-center gap-1">
                 <input
                     id="bgm-volume"
                     type="range"
