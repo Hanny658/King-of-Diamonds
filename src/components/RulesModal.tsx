@@ -63,6 +63,14 @@ export function GameInfoModal({ players, allKinds, settings, hideKinds = true }:
                             <div className="p-4 sm:p-6 overflow-auto space-y-8 text-sm leading-relaxed">
                                 {/* Settings */}
                                 <section>
+                                    <h4 className="text-slate-200 font-semibold mb-2">Game Background</h4>
+                                    <ul className="list-disc ml-6 mb-3 space-y-1 text-slate-300">
+                                        <p>
+                                            This Game is inspired (or try to implement) the game from TV series Alice in Boarderland (今際の国のアリス). But with some rule twist. Please refer to the detailed rule below. 
+                                            Have fun!
+                                        </p>
+                                    </ul>
+
                                     <h4 className="text-slate-200 font-semibold mb-2">Current Settings</h4>
                                     <ul className="list-disc ml-6 space-y-1 text-slate-300">
                                         <li>Players: <span className="font-mono">{players.length}</span> (allowed <span className="font-mono">{settings.minPlayers}–{settings.maxPlayers}</span>)</li>

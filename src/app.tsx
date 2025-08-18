@@ -20,21 +20,21 @@ type RosterEntry = {
 
 // ---------- Helpers ----------
 function randomAssignableKind(taken: Set<Personality>): Personality {
-  // filter kinds by singleton availability
+  // filter kinds by singleton availability / not human
   const candidates = ALL_KINDS.filter(k =>
     SINGLETON_KINDS.includes(k) ? !taken.has(k as Personality) : true
-  );
+  ).filter(p => p !== 'Human');
   return candidates[Math.floor(Math.random() * candidates.length)];
 }
 
-// ---------- Component ----------
+// ---------- The Component ----------
 export default function App() {
   const [stage, setStage] = useState<'setup' | 'playing' | 'finished'>('setup');
 const [roster, setRoster] = useState<RosterEntry[]>(() => {
   return Array.from({ length: 3 }).map((_, i) => ({
     id: i + 1,
     name: i === 0 ? "You" : makeShortName(),
-    kind: i === 0 ? "Human" : null, // 假设 Human 是 Personality 类型里的一个值
+    kind: i === 0 ? "Human" : null,
   }));
 });
 
@@ -78,9 +78,8 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
   }
 
   function removePlayer(id: number) {
-    // 如果希望最少保留 3 人，可加这段保护
     if (stage === 'setup' && roster.length <= 3) {
-      alert('至少需要 3 名玩家才能开始游戏，无法再删除。');
+      alert('Need at least 3 players to start game.');
       return;
     }
     setRoster(r => r.filter(e => e.id !== id));
