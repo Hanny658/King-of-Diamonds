@@ -1,6 +1,6 @@
 # ♦️King of Diamonds - ⚖️てんびんゲーム
 
-A classic beauty-contest survival game inspired by the ***King of Diamonds* challenge** from *Alice in Borderland* (*今際の国のアリス*). With small twists (apply double dmg and same-diff rule to whole game instead of less than 3 players)and various bot player characteristics.
+A classic beauty-contest survival game inspired by the ***King of Diamonds* challenge** from *Alice in Borderland* (*今際の国のアリス*). With small twists (apply double dmg and same-diff rule to whole game instead of less than 3 players)and various bot player characteristics. Used original OST as BGM (toggleable).
 
 ![Preview Screenshot](public/docs/preview.png)
 
@@ -42,9 +42,11 @@ The game features multiple AI strategies (precisely we call it algorithms), each
 
 ---
 
-## 💡 Inspirations
+## 💡 Inspirations | Credits
 
 - **《今際の国のアリス》** (*Alice in Borderland*), Season 2, *King of Diamonds* game
+- BGM: [Kuzuryu The King of Diamonds Theme - Unreleased OST](https://www.youtube.com/watch?v=7LaMwgsKvic) 
+- Build not for any commercial use. If anything violates with your policy, lemme know and I'll remove it.
 ---
 
 ## 🛠 Tech Stack

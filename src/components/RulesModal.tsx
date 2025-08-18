@@ -66,8 +66,8 @@ export function GameInfoModal({ players, allKinds, settings, hideKinds = true }:
                                     <h4 className="text-slate-200 font-semibold mb-2">Game Background</h4>
                                     <ul className="list-disc ml-6 mb-3 space-y-1 text-slate-300">
                                         <p>
-                                            This Game is inspired (or try to implement) the game from TV series Alice in Boarderland (今際の国のアリス). But with some rule twist. Please refer to the detailed rule below. 
-                                            Have fun!
+                                            This Game is inspired (or try to implement) the game from TV series 今際の国のアリス (Alice in Borderland). But with some rule twist. Please refer to the detailed rule below. 
+                                            Have fun! よ～く楽<b>しんで</b>ください~
                                         </p>
                                     </ul>
 
