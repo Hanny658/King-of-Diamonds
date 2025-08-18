@@ -5,7 +5,7 @@ import { GameRecord } from './core/GameRecord';
 import type { IPlayer } from './models/IPlayer';
 import type { Personality } from './models/types';
 import { ALL_KINDS, SINGLETON_KINDS, createPlayer } from './models/factory';
-import { makeShortName } from './utils/names';
+import { makeShortName, randomAssignableKind } from './utils/playerUtils';
 import { GameInfoModal } from './components/RulesModal';
 import { HumanPlayer } from './models/players/HumanPlayer';
 import { HumanChoiceSelector } from './components/HumanChoiceSelector';
@@ -19,15 +19,6 @@ type RosterEntry = {
   name: string;
   kind: Personality | null; // null = unassigned yet
 };
-
-// ---------- Helpers ----------
-function randomAssignableKind(taken: Set<Personality>): Personality {
-  // filter kinds by singleton availability / not human
-  const candidates = ALL_KINDS.filter(k =>
-    SINGLETON_KINDS.includes(k) ? !taken.has(k as Personality) : true
-  ).filter(p => p !== 'Human');
-  return candidates[Math.floor(Math.random() * candidates.length)];
-}
 
 // ---------- The Component ----------
 export default function App() {

@@ -35,3 +35,17 @@ export function createPlayer(kind: Personality, id: number, name: string): IPlay
         default: return new RationalPlayer(id, name, 'Rational');
     }
 }
+
+// Base is 1 as Rational
+export const TYPE_WEIGHTS = {
+    Rational: 1,
+    SwingRational: 1.2,
+    Saboteur: 0.2,
+    Quitter: 0.5,
+    Copycat: 0.7,
+    Smooth: 1,
+    Mathematician: 1,
+    Gambler: 0.8,
+    Kuzuryu: 0.6,
+    Human: 0      // will be filtered out regardless (apart from .filter()s)
+} as const;
