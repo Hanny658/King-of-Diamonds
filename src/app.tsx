@@ -10,6 +10,8 @@ import { GameInfoModal } from './components/RulesModal';
 import { HumanPlayer } from './models/players/HumanPlayer';
 import { HumanChoiceSelector } from './components/HumanChoiceSelector';
 import { RoundsTable } from './components/RoundsTable';
+import { BGMProvider } from './utils/BGMContext';
+import { BGMPlayer } from './components/BGMPlayer';
 
 // ---------- Types ----------
 type RosterEntry = {
@@ -30,13 +32,13 @@ function randomAssignableKind(taken: Set<Personality>): Personality {
 // ---------- The Component ----------
 export default function App() {
   const [stage, setStage] = useState<'setup' | 'playing' | 'finished'>('setup');
-const [roster, setRoster] = useState<RosterEntry[]>(() => {
-  return Array.from({ length: 3 }).map((_, i) => ({
-    id: i + 1,
-    name: i === 0 ? "You" : makeShortName(),
-    kind: i === 0 ? "Human" : null,
-  }));
-});
+  const [roster, setRoster] = useState<RosterEntry[]>(() => {
+    return Array.from({ length: 3 }).map((_, i) => ({
+      id: i + 1,
+      name: i === 0 ? "You" : makeShortName(),
+      kind: i === 0 ? "Human" : null,
+    }));
+  });
 
 
   const [players, setPlayers] = useState<IPlayer[]>([]);
@@ -129,94 +131,97 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
   // -------------- RENDER --------------
   if (stage === 'setup') {
     return (
-      <div className="!min-h-screen !w-srceen bg-slate-900 text-slate-100 p-6">
-        <div className="w-full mx-auto space-y-6">
-          <header className="flex items-center justify-between">
-            <h2 className="!text-4xl font-bold mr-2">King of Diamonds</h2>
-            <div className="space-x-2">
-              <button onClick={addBot} className="px-3 py-1.5 !bg-indigo-600 rounded hover:!bg-indigo-500">
-                Add Bot
-              </button>
-              <button onClick={startGame} className="px-3 py-1.5 !bg-emerald-600 rounded hover:!bg-emerald-500">
-                Start Game
-              </button>
-              <GameInfoModal
-                players={players}
-                allKinds={ALL_KINDS}
-                settings={{
-                  minPlayers: 3,
-                  maxPlayers: 24,
-                  initialHP: 10,
-                  numberRange: [0, 100],
-                  singletonKinds: SINGLETON_KINDS,
-                }}
-              />
-            </div>
-          </header>
+      <BGMProvider>
+        <div className="!min-h-screen !w-srceen bg-slate-900 text-slate-100 p-6">
+          <div className="w-full mx-auto space-y-6">
+            <header className="flex items-center justify-between">
+              <h2 className="!text-lg !md:text-4xl font-bold mr-2">King of Diamonds</h2>
+              <div className="space-x-2">
+                <BGMPlayer />
+                <button onClick={addBot} className="px-3 py-1.5 !bg-indigo-600 rounded hover:!bg-indigo-500">
+                  Add Bot
+                </button>
+                <button onClick={startGame} className="px-3 py-1.5 !bg-emerald-600 rounded hover:!bg-emerald-500">
+                  Start Game
+                </button>
+                <GameInfoModal
+                  players={players}
+                  allKinds={ALL_KINDS}
+                  settings={{
+                    minPlayers: 3,
+                    maxPlayers: 24,
+                    initialHP: 10,
+                    numberRange: [0, 100],
+                    singletonKinds: SINGLETON_KINDS,
+                  }}
+                />
+              </div>
+            </header>
 
-          <section>
-            <h2 className="text-lg font-semibold mb-2">Roster (starts with 3 players)</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
-                <thead>
-                  <tr className="bg-slate-800">
-                    <th className="text-left px-3 py-2">ID</th>
-                    <th className="text-left px-3 py-2">Name</th>
-                    <th className="text-left px-3 py-2">Character</th>
-                    <th className="text-left px-3 py-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {roster.map(r => (
-                    <tr key={r.id} className="odd:bg-slate-800/50">
-                      <td className="px-3 py-2">{r.id}</td>
-                      <td className="px-3 py-2">
-                        <input
-                          value={r.name}
-                          onInput={(e: any) => updateName(r.id, e.currentTarget.value)}
-                          className="bg-slate-800 border border-slate-700 rounded px-2 py-1 w-56"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <select
-                          value={r.kind ?? ''}
-                          onInput={(e: any) => updateKind(r.id, e.currentTarget.value)}
-                          className="bg-slate-800 border border-slate-700 rounded px-2 py-1"
-                        >
-                          <option value="">(random on start)</option>
-                          {ALL_KINDS.map(k => {
-                            const disabled =
-                              SINGLETON_KINDS.includes(k) && takenSingletons.has(k) && r.kind !== k;
-                            return (
-                              <option key={k} value={k} disabled={disabled}>
-                                {k}{disabled ? ' (taken)' : ''}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </td>
-                      <td className="px-3 py-2">
-                        <button
-                          onClick={() => removePlayer(r.id)}
-                          className="!bg-transparent !text-red-800/80 disabled:!text-slate-400/80"
-                          disabled={roster.length <= 3}
-                          // Minimal to start : 3 players
-                          title="Delete this player"
-                        >
-                          <i class="bi text-2xl bi-person-fill-dash"></i>
-                        </button>
-                      </td>
+            <section>
+              <h2 className="text-lg font-semibold mb-2">Roster (starts with 3 players)</h2>
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm">
+                  <thead>
+                    <tr className="bg-slate-800">
+                      <th className="text-left px-3 py-2">ID</th>
+                      <th className="text-left px-3 py-2">Name</th>
+                      <th className="text-left px-3 py-2">Character</th>
+                      <th className="text-left px-3 py-2">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <p className="text-xs !text-slate-400 mt-2">
-                Kuzuryu are limited to one instance per game. Unassigned AIs will be randomized on start.
-              </p>
-            </div>
-          </section>
+                  </thead>
+                  <tbody>
+                    {roster.map(r => (
+                      <tr key={r.id} className="odd:bg-slate-800/50">
+                        <td className="px-3 py-2">{r.id}</td>
+                        <td className="px-3 py-2">
+                          <input
+                            value={r.name}
+                            onInput={(e: any) => updateName(r.id, e.currentTarget.value)}
+                            className="bg-slate-800 border border-slate-700 rounded px-2 py-1 w-56"
+                          />
+                        </td>
+                        <td className="px-3 py-2">
+                          <select
+                            value={r.kind ?? ''}
+                            onInput={(e: any) => updateKind(r.id, e.currentTarget.value)}
+                            className="bg-slate-800 border border-slate-700 rounded px-2 py-1"
+                          >
+                            <option value="">(random on start)</option>
+                            {ALL_KINDS.map(k => {
+                              const disabled =
+                                SINGLETON_KINDS.includes(k) && takenSingletons.has(k) && r.kind !== k;
+                              return (
+                                <option key={k} value={k} disabled={disabled}>
+                                  {k}{disabled ? ' (taken)' : ''}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </td>
+                        <td className="px-3 py-2">
+                          <button
+                            onClick={() => removePlayer(r.id)}
+                            className="!bg-transparent !text-red-800/80 disabled:!text-slate-400/80"
+                            disabled={roster.length <= 3}
+                            // Minimal to start : 3 players
+                            title="Delete this player"
+                          >
+                            <i class="bi text-2xl bi-person-fill-dash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="text-xs !text-slate-400 mt-2">
+                  Kuzuryu are limited to one instance per game. Unassigned AIs will be randomized on start.
+                </p>
+              </div>
+            </section>
+          </div>
         </div>
-      </div>
+      </BGMProvider>
     );
   }
 
@@ -280,93 +285,96 @@ const [roster, setRoster] = useState<RosterEntry[]>(() => {
   }
 
   return (
-    <div className="min-h-screen w-srceen bg-slate-900 text-slate-100 p-6 relative">
-      <div className="w-full mx-auto space-y-6 overflow-y-auto">
-        <header className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">King of Diamonds — Match</h2>
-          <div className="flex items-center gap-2">
-            <button onClick={backToSetup} className="px-3 py-1.5 !bg-slate-700 rounded hover:!bg-slate-600">
-              Restart
-            </button>
-            {human && (
-              <HumanChoiceSelector players={players} onPick={submitHumanChoice} round={record.currRound()} /*Use tick here as substitution to round*/ />
-            )}
-            <button
-              onClick={playOne}
-              disabled={!humanReady}
-              className={`px-3 py-1.5 rounded ${humanReady ? '!bg-emerald-600 hover:!bg-emerald-500' : '!bg-slate-700 !text-slate-400 cursor-not-allowed'}`}
-              title={human && !humanReady ? 'Pick your number first' : ''}
-            >
-              Play Round
-            </button>
-          </div>
-        </header>
+    <BGMProvider>
+      <div className="min-h-screen w-srceen bg-slate-900 text-slate-100 p-6 relative">
+        <div className="w-full mx-auto space-y-6 overflow-y-auto">
+          <header className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">King of Diamonds — Match</h2>
+            <div className="flex items-center gap-2">
+              <BGMPlayer />
+              <button onClick={backToSetup} className="px-3 py-1.5 !bg-slate-700 rounded hover:!bg-slate-600">
+                Restart
+              </button>
+              {human && (
+                <HumanChoiceSelector players={players} onPick={submitHumanChoice} round={record.currRound()} /*Use tick here as substitution to round*/ />
+              )}
+              <button
+                onClick={playOne}
+                disabled={!humanReady}
+                className={`px-3 py-1.5 rounded ${humanReady ? '!bg-emerald-600 hover:!bg-emerald-500' : '!bg-slate-700 !text-slate-400 cursor-not-allowed'}`}
+                title={human && !humanReady ? 'Pick your number first' : ''}
+              >
+                Play Round
+              </button>
+            </div>
+          </header>
 
-        <section>
-          <h2 className="text-lg font-semibold mb-2">Players</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead>
-                <tr className="bg-slate-800">
-                  <th className="text-left px-3 py-2">ID</th>
-                  <th className="text-left px-3 py-2">Name</th>
-                  <th className="text-left px-3 py-2">
-                    Kind
-                    <button
-                      onClick={() => setShowKinds(v => !v)}
-                      className="ml-1 p-0.5 !bg-transparent border-0 text-slate-400 hover:text-slate-200"
-                      title={showKinds ? 'Hide player types' : 'Show player types'}
-                    >
-                      {showKinds
-                        ? <i class="bi bi-eye-fill"></i>
-                        : <i class="bi bi-eye-slash-fill"></i>}
-                    </button>
-                  </th>
-                  <th className="text-left px-3 py-2">HP</th>
-                </tr>
-              </thead>
-              <tbody>
-                {alive.map(p => (
-                  <tr key={p.id} className="odd:bg-slate-800/50">
-                    <td className="px-3 py-2">{p.id}</td>
-                    <td className="px-3 py-2">{p.name}</td>
-                    <td className={`px-3 py-2 md:min-w-32 ${showKinds ? "text-slate-200" : "!text-slate-400/80 italic"}`}>
-                      {showKinds ? p.kind : '< Hidden >'}
-                    </td>
-                    <td className={`px-3 py-2 font-mono font-black text-xl text-center
-                      ${p.hp>7 ? "!text-green-700" : (p.hp>2 ? "!text-yellow-700" : "text-red-700")}`}>
-                      {p.hp == 0 ? <i class="bi !text-red-800/70 bi-emoji-dizzy"></i> 
-                      : p.hp}
-                    </td>
+          <section>
+            <h2 className="text-lg font-semibold mb-2">Players</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead>
+                  <tr className="bg-slate-800">
+                    <th className="text-left px-3 py-2">ID</th>
+                    <th className="text-left px-3 py-2">Name</th>
+                    <th className="text-left px-3 py-2">
+                      Kind
+                      <button
+                        onClick={() => setShowKinds(v => !v)}
+                        className="ml-1 p-0.5 !bg-transparent border-0 text-slate-400 hover:text-slate-200"
+                        title={showKinds ? 'Hide player types' : 'Show player types'}
+                      >
+                        {showKinds
+                          ? <i class="bi bi-eye-fill"></i>
+                          : <i class="bi bi-eye-slash-fill"></i>}
+                      </button>
+                    </th>
+                    <th className="text-left px-3 py-2">HP</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
+                </thead>
+                <tbody>
+                  {alive.map(p => (
+                    <tr key={p.id} className="odd:bg-slate-800/50">
+                      <td className="px-3 py-2">{p.id}</td>
+                      <td className="px-3 py-2">{p.name}</td>
+                      <td className={`px-3 py-2 md:min-w-32 ${showKinds ? "text-slate-200" : "!text-slate-400/80 italic"}`}>
+                        {showKinds ? p.kind : '< Hidden >'}
+                      </td>
+                      <td className={`px-3 py-2 font-mono font-black text-xl text-center
+                      ${p.hp > 7 ? "!text-green-700" : (p.hp > 2 ? "!text-yellow-700" : "text-red-700")}`}>
+                        {p.hp == 0 ? <i class="bi !text-red-800/70 bi-emoji-dizzy"></i>
+                          : p.hp}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
 
-        <section>
-          <h2 className="text-lg font-semibold mb-2">Finished Rounds <b className="text-sm !text-gray-300/60">(Newest on top)</b></h2>
-          <RoundsTable rounds={record.rounds} />
-        </section>
+          <section>
+            <h2 className="text-lg font-semibold mb-2">Finished Rounds <b className="text-sm !text-gray-300/60">(Newest on top)</b></h2>
+            <RoundsTable rounds={record.rounds} />
+          </section>
 
-        <footer className="text-xs text-slate-400">
-          Winner will be highlighted, a perfect-hit winner will be rainbow-highlighted.
-        </footer>
+          <footer className="text-xs text-slate-400">
+            Winner will be highlighted, a perfect-hit winner will be rainbow-highlighted.
+          </footer>
+        </div>
+        <div className="fixed bottom-4 right-4">
+          <GameInfoModal
+            players={players}
+            allKinds={ALL_KINDS}
+            settings={{
+              minPlayers: 3,
+              maxPlayers: 24,
+              initialHP: 10,
+              numberRange: [0, 100],
+              singletonKinds: SINGLETON_KINDS,
+            }}
+          />
+        </div>
       </div>
-      <div className="fixed bottom-4 right-4">
-        <GameInfoModal
-          players={players}
-          allKinds={ALL_KINDS}
-          settings={{
-            minPlayers: 3,
-            maxPlayers: 24,
-            initialHP: 10,
-            numberRange: [0, 100],
-            singletonKinds: SINGLETON_KINDS,
-          }}
-        />
-      </div>
-    </div>
+    </BGMProvider>
   );
 }
