@@ -1,3 +1,4 @@
+// Math utils
 export const clamp = (x: number, lo = 0, hi = 100) => Math.max(lo, Math.min(hi, x));
 export const roundInt = (x: number) => Math.round(x);
 

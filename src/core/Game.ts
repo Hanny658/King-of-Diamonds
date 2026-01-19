@@ -21,10 +21,12 @@ export class Game {
         }
     }
 
+    /** get() for players alive */
     private alivePlayers(): IPlayer[] {
         return this.players.filter(p => p.hp > 0);
     }
 
+    /** Proceed current round */
     playRound(): RoundData {
         if (this.matchWinner) {
             throw new Error('Match already finished.');

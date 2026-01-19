@@ -1,4 +1,3 @@
-// src/utils/bgmManager.ts
 // A tiny singleton around HTMLAudioElement for global reuse.
 
 const BGM_SRC = "/bgm-KoD.mp3";

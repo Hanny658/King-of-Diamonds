@@ -2,6 +2,7 @@ import type { IPlayer } from './IPlayer';
 import type { RoundData, Personality } from './types';
 import { GameRecord } from '../core/GameRecord';
 
+// Defines standard attributes of a player
 export abstract class PlayerBase implements IPlayer {
     id!: number;
     name!: string;

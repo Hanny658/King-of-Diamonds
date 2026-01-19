@@ -1,6 +1,11 @@
 import { PlayerBase } from '../PlayerBase';
 import { clamp, randInt, roundInt } from '../../utils/math';
 
+/** AI Player: Quitter
+ * 
+ * Strat. - Trying its best when HP is high/moderate
+ *        - Give-up and lose hope when HP is low, start to play random
+ */
 export class QuitterPlayer extends PlayerBase {
     private initialPicked = false;
     chooseNumber(): number {

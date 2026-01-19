@@ -2,6 +2,10 @@ import { PlayerBase } from '../PlayerBase';
 import { GameRecord } from '../../core/GameRecord';
 import { clamp, roundInt } from '../../utils/math';
 
+/** AI Player: Smooth
+ * 
+ * Strat. - Predicting a optimal choice with a linear smooth guessur
+ */
 export class SmoothPlayer extends PlayerBase {
     private alpha = 0.6; // smoothing factor
     private smoothedAvg: number | null = null;

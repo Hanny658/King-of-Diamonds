@@ -18,6 +18,7 @@ type Props = {
     hideKinds?: boolean;
 };
 
+// Renders the rule pop-up window that introduce game rules and AI characters
 export function GameInfoModal({ players, allKinds, settings, hideKinds = true }: Props) {
     const [open, setOpen] = useState(false);
     const [hideRosteredKinds, setHideRosteredKinds] = useState(hideKinds);
@@ -30,6 +31,7 @@ export function GameInfoModal({ players, allKinds, settings, hideKinds = true }:
 
     return (
         <>
+            {/* Botton that triggers Pop-up Window opening */}
             <button
                 onClick={() => setOpen(true)}
                 className="inline-flex items-center gap-2 !px-2 !py-1.5 border-0 !bg-transparent"

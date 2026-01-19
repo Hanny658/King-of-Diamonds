@@ -1,6 +1,11 @@
 import { PlayerBase } from '../PlayerBase';
 import { clamp, roundInt, randInt } from '../../utils/math';
 
+/** AI Player: Swing Rational
+ * 
+ * Strat. - Mimics a normal rational player with a some claculation err
+ *        - But more hesitating about value choices
+ */
 export class SwingRationalPlayer extends PlayerBase {
     private initialPicked = false;
 

@@ -1,8 +1,8 @@
-// src/audio/BGMContext.tsx
 import { createContext } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import { bgmManager } from "./BGMManager";
 
+// BGM Attr.
 type BGMContextValue = {
     playing: boolean;
     volume: number;
@@ -12,6 +12,7 @@ type BGMContextValue = {
     setVolume: (v: number) => void;
 };
 
+// Init
 export const BGMContext = createContext<BGMContextValue>({
     playing: false,
     volume: 0.6,
@@ -21,6 +22,7 @@ export const BGMContext = createContext<BGMContextValue>({
     setVolume: () => { },
 });
 
+// A provider wrapper class
 export function BGMProvider({ children }: { children: preact.ComponentChildren }) {
     const [playing, setPlaying] = useState(bgmManager.playing);
     const [volume, setVol] = useState(bgmManager.volume);

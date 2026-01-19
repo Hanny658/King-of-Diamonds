@@ -1,6 +1,12 @@
 import { PlayerBase } from '../PlayerBase';
 import { randInt } from '../../utils/math';
 
+/** AI Player: Saboteur
+ * 
+ * Strat. - Always pick extermely high/low values to mess up player's choices, 
+ *        - And breaking the Nash Equilibrium with its own life
+ *        - WHO EVER PLAY GAMES RATIONALLY
+ */
 export class SaboteurPlayer extends PlayerBase {
     private initialPicked = false;
     chooseNumber(): number {

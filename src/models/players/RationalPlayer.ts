@@ -1,6 +1,10 @@
 import { PlayerBase } from '../PlayerBase';
 import { clamp, roundInt, randInt } from '../../utils/math';
 
+/** AI Player: Rational
+ * 
+ * Strat. - Mimics a normal rational player with a bit of claculation err
+ */
 export class RationalPlayer extends PlayerBase {
     // initial pick: random 15–50
     private initialPicked = false;

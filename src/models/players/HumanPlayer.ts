@@ -1,6 +1,9 @@
 import { PlayerBase } from '../PlayerBase';
 import { clamp, roundInt } from '../../utils/math';
 
+/** Human Player
+ *  Strat. - Based on your Choice!
+ */
 export class HumanPlayer extends PlayerBase {
     private pendingChoice: number | null = null;
 

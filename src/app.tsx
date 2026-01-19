@@ -31,7 +31,6 @@ export default function App() {
     }));
   });
 
-
   const [players, setPlayers] = useState<IPlayer[]>([]);
   const [game, setGame] = useState<Game | null>(null);
   const [tick, setTick] = useState(0);
@@ -52,6 +51,7 @@ export default function App() {
     return s;
   }, [roster]);
 
+  //   --------------- Helper Functions ----------------
   function addBot() {
     const nextId = (roster.at(-1)?.id ?? 0) + 1;
     setRoster(r => [...r, { id: nextId, name: makeShortName(), kind: null }]);
@@ -261,14 +261,14 @@ export default function App() {
     );
   }
 
-  // playing stage
+  // Playing stage
   const record = GameRecord.instance;
   const alive = useMemo(
     () => players.map(p => ({ id: p.id, name: p.name, kind: p.kind, hp: p.hp })),
     [players, tick]
   );
 
-  // find the human (if any) and readiness (must have a pending choice)
+  // Find the human (if any) and readiness (must have a pending choice)
   const human = players.find(p => p.kind === 'Human') as HumanPlayer | undefined;
   const humanReady = !human || human.hasPendingChoice();
 

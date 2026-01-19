@@ -1,4 +1,3 @@
-// src/components/BGMPlayer.tsx
 import { useContext, useMemo } from "preact/hooks";
 import { BGMContext } from "../utils/BGMContext";
 

@@ -3,7 +3,9 @@ import type { RoundData } from '../models/types';
 
 type Props = { rounds: RoundData[] };
 
+// This component renders an in-game table recording game results of past rounds
 export function RoundsTable({ rounds }: Props) {
+    // Retrive round memo and store in a reversed index
     const roundsDesc = useMemo(() => [...rounds].reverse(), [rounds.length]);
 
     return (

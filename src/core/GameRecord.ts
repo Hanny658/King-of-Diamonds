@@ -1,5 +1,6 @@
 import type { RoundData } from '../models/types';
 
+// Not gonna reder anything, but keep a record of the game state
 export class GameRecord {
     private static _instance: GameRecord | null = null;
     public rounds: RoundData[] = [];

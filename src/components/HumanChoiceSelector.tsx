@@ -28,17 +28,20 @@ export function HumanChoiceSelector({ players, onPick, round }: Props) {
         }
     }, [open]);
 
+    // Clear selection each round
     useEffect(() => {
         setSelection(-1);
         setOpen(false);
     }, [round]);
 
+    // Submission for the current round
     const submit = () => {
         if (selection == -1) return;
         onPick(clamp(roundInt(selection), 0, 100));
         setOpen(false);
     };
 
+    // Calls when player selects the number
     const choose = (n: number) => {
         if (selection == n) {
             // Double click to submit
@@ -129,6 +132,7 @@ export function HumanChoiceSelector({ players, onPick, round }: Props) {
     );
 }
 
+// Generates one number tile
 function NumberTile({ n, onClick }: { n: number; onClick: (n: number) => void }) {
     return (
         <button
