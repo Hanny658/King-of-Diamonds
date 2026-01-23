@@ -4,7 +4,8 @@ import { clamp, roundInt } from '../../utils/math';
 
 /** AI Player: Smooth
  * 
- * Strat. - Predicting a optimal choice with a linear smooth guessur
+ * Strat. - First 3 rounds: like Rational
+ *        - After: exponential smoothing on averages, then picks 0.8 × smoothedAverage.
  */
 export class SmoothPlayer extends PlayerBase {
     private alpha = 0.6; // smoothing factor

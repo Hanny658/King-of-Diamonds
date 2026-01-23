@@ -133,69 +133,73 @@ export function GameInfoModal({ players, allKinds, settings, hideKinds = true }:
                                         <AIBox title="Human">
                                             <ul className="list-disc ml-5">
                                                 <li>Manually picks a number via the selector panel each round.</li>
-                                                <li>Limited to one instance per match (singleton).</li>
+                                                <li>Limited to one instance per match (singleton), might be removed if I'm making this a multi-player game?</li>
                                             </ul>
                                         </AIBox>
 
                                         <AIBox title="Rational">
                                             <ul className="list-disc ml-5">
-                                                <li>Round 1: random 15–50.</li>
-                                                <li>Later: picks <span className="font-mono">round(0.8 × lastAverage) ± 1</span> (small arithmetic error).</li>
+                                                <li>Mimics a normal rational player with a bit of calculation err.</li>
+                                                <li>Plays in a stable manner.</li>
                                             </ul>
                                         </AIBox>
 
                                         <AIBox title="SwingRational">
                                             <ul className="list-disc ml-5">
-                                                <li>Round 1: random 15–50.</li>
-                                                <li>Later: <span className="font-mono">round(0.8 × lastAverage)</span> with swing: ±2 (HP&gt;6), ±3 (HP≤6), ±4 (HP≤3).</li>
+                                                
+                                                <li>Mimics a rational player with some arithmetic error.</li>
+                                                <li>Hesitetes beteween choices around the target number.</li>
+                                                <li>Sometimes robust XD</li>
                                             </ul>
                                         </AIBox>
 
                                         <AIBox title="Saboteur">
                                             <ul className="list-disc ml-5">
-                                                <li>Round 1: random 1–10.</li>
-                                                <li>Later: random in 0–7 or 90–100 (perturbs the average).</li>
+                                                <li>Always pick extermely high/low values to mess up player's choices</li>
+                                                <li>And breaking the Nash Equilibrium with its own life</li>
+                                                <li>WHO EVER PLAY GAMES RATIONALLY</li>
                                             </ul>
                                         </AIBox>
 
                                         <AIBox title="Quitter">
                                             <ul className="list-disc ml-5">
-                                                <li>HP≥5: like SwingRational (±2 around 0.8×lastAverage).</li>
-                                                <li>HP&lt;5: 80% fully random, 20% SwingRational(±2).</li>
+                                                <li>Trying its best when HP is high/moderate</li>
+                                                <li>Give-up and lose hope when HP is low, start to play random.</li>
                                             </ul>
                                         </AIBox>
 
                                         <AIBox title="Copycat">
                                             <ul className="list-disc ml-5">
-                                                <li>Copies last round’s winner number (no offset).</li>
+                                                <li>Always copying last round’s winner number.</li>
                                             </ul>
                                         </AIBox>
 
                                         <AIBox title="Smooth">
                                             <ul className="list-disc ml-5">
-                                                <li>First 3 rounds: like Rational.</li>
-                                                <li>After: exponential smoothing on averages, then picks 0.8 × smoothedAverage.</li>
+                                                <li>Predicting a optimal choice with a smooth guessur algorithm in mind.</li>
+                                                <li>Probably the one with strongest caculation ability?</li>
                                             </ul>
                                         </AIBox>
 
                                         <AIBox title="Mathematician">
                                             <ul className="list-disc ml-5">
-                                                <li>Each round randomly applies 0.8¹…0.8⁵ to lastAverage (i.e., 1–5 layers of reasoning) and rounds/clamps.</li>
+                                                <li>Thinks Multiple-depths.</li>
+                                                <li>Have it's own EQUATION towards winning</li>
                                             </ul>
                                         </AIBox>
 
                                         <AIBox title="Gambler">
                                             <ul className="list-disc ml-5">
-                                                <li>HP≥5: fully random.</li>
-                                                <li>HP&lt;5: behaves like Rational (0.8 × lastAverage).</li>
+                                                <li>Takes risky choices when HP is high.</li>
+                                                <li>Try to play rational when HP is low.</li>
                                             </ul>
                                         </AIBox>
 
                                         <AIBox title="Kyzuryu">
                                             <ul className="list-disc ml-5">
-                                                <li>Predicts others via their expected behavior; scans a small candidate set.</li>
+                                                <li>Predicts others via their expected behavior;</li>
                                                 <li>Chooses a number that makes itself the unique closest when possible; otherwise picks max margin.</li>
-                                                <li>Singleton (at most one per match).</li>
+                                                <li>Singleton (at most one per match) by default. (Too strong!)</li>
                                             </ul>
                                         </AIBox>
                                     </div>

@@ -19,7 +19,8 @@ export const ALL_KINDS: Personality[] = [
 
 // That can only have one-at-a-time (Probably remove Human when it becomes online multi-player)
 export const SINGLETON_KINDS: Personality[] = [
-    'Kuzuryu', 'Human'
+    'Kuzuryu', 
+    'Human'
 ];
 
 // Manufacture method

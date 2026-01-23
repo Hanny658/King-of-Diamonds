@@ -3,8 +3,8 @@ import { clamp, roundInt } from '../../utils/math';
 
 /** AI Player: Mathematician
  * 
- * Strat. - Thinks Multiple-depths (compare to classical rational)
- *        - Have it's own EQUATION towards winning
+ * Strat. - Each round randomly applies 0.8¹…0.8⁵ to lastAverage (i.e., 1–5 layers of reasoning) and rounds/clamps.
+ * 
  */
 export class Mathematician extends PlayerBase {
     // Or a multi-step calculat-er, cooresponding to the "Equation" in the show

@@ -3,8 +3,8 @@ import { randInt } from '../../utils/math';
 
 /** AI Player: Saboteur
  * 
- * Strat. - Always pick extermely high/low values to mess up player's choices, 
- *        - And breaking the Nash Equilibrium with its own life
+ * Strat. - Round 1: random 1–10.
+ *        - Later: random in 0–7 or 90–100 (perturbs the average). 
  *        - WHO EVER PLAY GAMES RATIONALLY
  */
 export class SaboteurPlayer extends PlayerBase {

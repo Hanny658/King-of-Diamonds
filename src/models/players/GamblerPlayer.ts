@@ -3,8 +3,8 @@ import { clamp, randInt, roundInt } from '../../utils/math';
 
 /** AI Player: Gambler
  * 
- * Strat. - Takes risky choices when HP is high
- *        - Try to play rational when HP is low
+ * Strat. - HP≥5: fully random
+ *        - HP<5: behaves like Rational (0.8 × lastAverage)
  */
 export class GamblerPlayer extends PlayerBase {
     chooseNumber(): number {

@@ -3,8 +3,8 @@ import { clamp, randInt, roundInt } from '../../utils/math';
 
 /** AI Player: Quitter
  * 
- * Strat. - Trying its best when HP is high/moderate
- *        - Give-up and lose hope when HP is low, start to play random
+ * Strat. - HP≥5: like SwingRational (±2 around 0.8×lastAverage).
+ *        - HP<5: 80% fully random, 20% SwingRational(±2)
  */
 export class QuitterPlayer extends PlayerBase {
     private initialPicked = false;

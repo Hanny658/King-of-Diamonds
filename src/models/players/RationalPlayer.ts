@@ -3,7 +3,8 @@ import { clamp, roundInt, randInt } from '../../utils/math';
 
 /** AI Player: Rational
  * 
- * Strat. - Mimics a normal rational player with a bit of claculation err
+ * Strat. - Round 1: random 15–50.
+ *        - Later: picks round(0.8 × lastAverage) ± 1 (mimics small arithmetic error)
  */
 export class RationalPlayer extends PlayerBase {
     // initial pick: random 15–50
