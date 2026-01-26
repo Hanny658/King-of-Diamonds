@@ -34,7 +34,10 @@ function weightedPick<T>(items: T[], weights: number[]): T {
  * - Excludes 'Human'.
  * - Uses weights[kind] if provided; default weight = 1.
  */
-export function randomAssignableKind(taken: Set<Personality>): Personality {
+export function randomAssignableKind(
+    taken: Set<Personality>,
+    weightsOverride?: Partial<Record<Personality, number>>
+): Personality {
     // Filter by availability (singletons) + exclude Human
     const candidates = ALL_KINDS.filter(k =>
         (SINGLETON_KINDS.includes(k) ? !taken.has(k) : true)
@@ -47,9 +50,12 @@ export function randomAssignableKind(taken: Set<Personality>): Personality {
 
     // Build weights array (default 1, clamp to 0 if negative/NaN)
     const ws = candidates.map(k => {
-        const w = TYPE_WEIGHTS[k];
-        return Number.isFinite(w!) && (w as number) > 0 ? (w as number) : 1;
+        const w = weightsOverride?.[k] ?? TYPE_WEIGHTS[k];
+        return Number.isFinite(w!) && (w as number) > 0 ? (w as number) : 0;
     });
+
+    const total = ws.reduce((a, b) => a + b, 0);
+    if (total <= 0) return candidates[0] ?? 'Rational';
 
     // pick by weight
     return weightedPick(candidates, ws);

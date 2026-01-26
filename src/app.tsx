@@ -4,7 +4,7 @@ import { Game } from './core/Game';
 import { GameRecord } from './core/GameRecord';
 import type { IPlayer } from './models/IPlayer';
 import type { Personality } from './models/types';
-import { ALL_KINDS, SINGLETON_KINDS, createPlayer } from './models/factory';
+import { ALL_KINDS, SINGLETON_KINDS, TYPE_WEIGHTS, createPlayer } from './models/factory';
 import { makeShortName, randomAssignableKind } from './utils/playerUtils';
 import { GameInfoModal } from './components/RulesModal';
 import { HumanPlayer } from './models/players/HumanPlayer';
@@ -13,6 +13,7 @@ import { RoundsTable } from './components/RoundsTable';
 import { BGMProvider } from './utils/BGMContext';
 import { BGMPlayer } from './components/BGMPlayer';
 import { PopupNotice } from './components/PopupNotice';
+import { SettingsModal } from './components/SettingsModal';
 
 // ---------- Types ----------
 type RosterEntry = {
@@ -23,7 +24,7 @@ type RosterEntry = {
 
 // ---------- The Component ----------
 export default function App() {
-  const MAX_BOTS = 12;
+  const MAX_BOTS = 7;
   const [stage, setStage] = useState<'setup' | 'playing' | 'finished'>('setup');
   const [roster, setRoster] = useState<RosterEntry[]>(() => {
     return Array.from({ length: 3 }).map((_, i) => ({
@@ -40,6 +41,15 @@ export default function App() {
   const [openRec, setOpenRec] = useState(false);
   const [notice, setNotice] = useState<{ id: number; message: string } | null>(null);
   const noticeIdRef = useRef(0);
+  const [unlockMaxPlayers, setUnlockMaxPlayers] = useState(false);
+  const [typeWeights, setTypeWeights] = useState<Partial<Record<Personality, number>>>(() => ({
+    ...TYPE_WEIGHTS,
+  }));
+  const [typeEnabled, setTypeEnabled] = useState<Partial<Record<Personality, boolean>>>(() => {
+    const init: Partial<Record<Personality, boolean>> = {};
+    for (const k of ALL_KINDS) if (k !== 'Human') init[k] = true;
+    return init;
+  });
 
   function showNotice(message: string) {
     noticeIdRef.current += 1;
@@ -60,20 +70,19 @@ export default function App() {
     return s;
   }, [roster]);
 
-  const botCount = useMemo(
-    () => roster.filter(r => r.kind !== 'Human').length,
-    [roster]
-  );
+  const botCount = useMemo(() => roster.filter(r => r.kind !== 'Human').length, [roster]);
+  const botLimit = unlockMaxPlayers ? null : MAX_BOTS;
+  const atBotLimit = botLimit !== null && botCount >= botLimit;
 
   //   --------------- Helper Functions ----------------
   function addBot() {
-    if (botCount >= MAX_BOTS) {
+    if (atBotLimit) {
       showNotice('Max player number reached. (to have fun, disable the limit at settings XD)');
       return;
     }
     const nextId = (roster.at(-1)?.id ?? 0) + 1;
     setRoster(r => [...r, { id: nextId, name: makeShortName(), kind: null }]);
-    if (botCount + 1 >= MAX_BOTS) {
+    if (!unlockMaxPlayers && botCount + 1 >= MAX_BOTS) {
       showNotice('Max player number reached. (to have fun, disable the limit at settings XD)');
     }
   }
@@ -104,10 +113,16 @@ export default function App() {
     const used = new Set<Personality>();
     for (const r of roster) if (r.kind && SINGLETON_KINDS.includes(r.kind)) used.add(r.kind);
 
+    const effectiveWeights: Partial<Record<Personality, number>> = { ...typeWeights };
+    for (const k of ALL_KINDS) {
+      if (k === 'Human') continue;
+      if (typeEnabled[k] === false) effectiveWeights[k] = 0;
+    }
+
     // 2) assign random kinds for unassigned entries (respect singletons)
     const finalized = roster.map(e => {
       if (e.kind) return e;
-      const k = randomAssignableKind(used);
+      const k = randomAssignableKind(used, effectiveWeights);
       if (SINGLETON_KINDS.includes(k)) used.add(k);
       return { ...e, kind: k };
     });
@@ -149,15 +164,24 @@ export default function App() {
             <header className="flex items-center justify-between">
               <h2 className="!text-xl !md:text-4xl font-bold mr-2">King of Diamonds - てんびん</h2>
               <div className="space-x-2 space-y-0.5">
+                <SettingsModal
+                  allKinds={ALL_KINDS}
+                  weights={typeWeights}
+                  onWeightChange={(kind, value) => setTypeWeights(w => ({ ...w, [kind]: value }))}
+                  enabledMap={typeEnabled}
+                  onToggleEnabled={(kind, next) => setTypeEnabled(m => ({ ...m, [kind]: next }))}
+                  unlockMaxPlayers={unlockMaxPlayers}
+                  onToggleUnlock={setUnlockMaxPlayers}
+                />
                 <BGMPlayer />
                 <button
                   onClick={addBot}
-                  disabled={botCount >= MAX_BOTS}
-                  className={`px-3 py-1.5 rounded ${botCount >= MAX_BOTS
+                  disabled={atBotLimit}
+                  className={`px-3 py-1.5 rounded ${atBotLimit
                     ? '!bg-indigo-700/60 !text-slate-300 cursor-not-allowed'
                     : '!bg-indigo-600 hover:!bg-indigo-500'
                     }`}
-                  title={botCount >= MAX_BOTS ? 'Max player number reached' : 'Add a bot'}
+                  title={atBotLimit ? 'Max player number reached' : 'Add a bot'}
                 >
                   Add Bot
                 </button>
