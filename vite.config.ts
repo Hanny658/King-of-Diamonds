@@ -8,4 +8,7 @@ export default defineConfig({
     tailwindcss(),
     preact()
   ],
+  build: {
+    outDir: 'build',
+  },
 })

@@ -86,7 +86,7 @@ Then open `http://localhost:5173` in your browser.
 ```bash
 npm run build
 ```
-This will build static files into dist/, then you can test with serve.
+This will build static files into build/, then you can test with serve.
 
 ---
 
