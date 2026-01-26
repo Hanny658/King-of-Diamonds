@@ -195,11 +195,11 @@ export function GameInfoModal({ players, allKinds, settings, hideKinds = true }:
                                             </ul>
                                         </AIBox>
 
-                                        <AIBox title="Kyzuryu">
+                                        <AIBox title="Kuzuryu">
                                             <ul className="list-disc ml-5">
                                                 <li>Predicts others via their expected behavior;</li>
                                                 <li>Chooses a number that makes itself the unique closest when possible; otherwise picks max margin.</li>
-                                                <li>Singleton (at most one per match) by default. (Too strong!)</li>
+                                                <li>Multi-instance: when multiple Kuzuryu exist, they diversify their expectations to avoid mirrors.</li>
                                             </ul>
                                         </AIBox>
                                     </div>
