@@ -50,7 +50,7 @@ export const TYPE_WEIGHTS = {
     Smooth: 1,
     Mathematician: 1,
     Gambler: 0.8,
-    Kuzuryu: 0.6,  // @All 一回、死んでみる？
+    Kuzuryu: 0.2,  // @All 一回、死んでみる？
     Human: 0      
     // Human will be filtered out regardless (apart from .filter()s)
 } as const;

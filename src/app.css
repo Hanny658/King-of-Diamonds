@@ -51,6 +51,44 @@
   transform: rotate(180deg);
 }
 
+/* Popup notice */
+@keyframes kf-pop-in {
+  0% { opacity: 0; transform: translate(-50%, -6px) scale(0.98); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+@keyframes kf-pop-out {
+  0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -6px) scale(0.98); }
+}
+.kd-pop {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  z-index: 60;
+  pointer-events: none;
+}
+.kd-pop__panel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #374151;
+  background: #0f172a;
+  color: #e5e7eb;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+  font-size: 0.9rem;
+}
+.kd-pop__icon {
+  color: #f59e0b;
+}
+.kd-pop--in .kd-pop__panel {
+  animation: kf-pop-in 180ms ease-out forwards;
+}
+.kd-pop--out .kd-pop__panel {
+  animation: kf-pop-out 160ms ease-in forwards;
+}
+
 /* Rainbow animation bg (for perfect hits) */
 .rainbow-bg {
   background: linear-gradient(

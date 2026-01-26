@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import './app.css'
 import { Game } from './core/Game';
 import { GameRecord } from './core/GameRecord';
@@ -12,6 +12,7 @@ import { HumanChoiceSelector } from './components/HumanChoiceSelector';
 import { RoundsTable } from './components/RoundsTable';
 import { BGMProvider } from './utils/BGMContext';
 import { BGMPlayer } from './components/BGMPlayer';
+import { PopupNotice } from './components/PopupNotice';
 
 // ---------- Types ----------
 type RosterEntry = {
@@ -22,6 +23,7 @@ type RosterEntry = {
 
 // ---------- The Component ----------
 export default function App() {
+  const MAX_BOTS = 12;
   const [stage, setStage] = useState<'setup' | 'playing' | 'finished'>('setup');
   const [roster, setRoster] = useState<RosterEntry[]>(() => {
     return Array.from({ length: 3 }).map((_, i) => ({
@@ -36,6 +38,13 @@ export default function App() {
   const [tick, setTick] = useState(0);
   const [showKinds, setShowKinds] = useState(false);
   const [openRec, setOpenRec] = useState(false);
+  const [notice, setNotice] = useState<{ id: number; message: string } | null>(null);
+  const noticeIdRef = useRef(0);
+
+  function showNotice(message: string) {
+    noticeIdRef.current += 1;
+    setNotice({ id: noticeIdRef.current, message });
+  }
 
   useEffect(() => {
     if (stage === 'playing' && game) {
@@ -51,10 +60,22 @@ export default function App() {
     return s;
   }, [roster]);
 
+  const botCount = useMemo(
+    () => roster.filter(r => r.kind !== 'Human').length,
+    [roster]
+  );
+
   //   --------------- Helper Functions ----------------
   function addBot() {
+    if (botCount >= MAX_BOTS) {
+      showNotice('Max player number reached. (to have fun, disable the limit at settings XD)');
+      return;
+    }
     const nextId = (roster.at(-1)?.id ?? 0) + 1;
     setRoster(r => [...r, { id: nextId, name: makeShortName(), kind: null }]);
+    if (botCount + 1 >= MAX_BOTS) {
+      showNotice('Max player number reached. (to have fun, disable the limit at settings XD)');
+    }
   }
 
   function updateKind(id: number, kindStr: string) {
@@ -72,7 +93,7 @@ export default function App() {
 
   function removePlayer(id: number) {
     if (stage === 'setup' && roster.length <= 3) {
-      alert('Need at least 3 players to start game.');
+      showNotice('minimal 3 players are required.');
       return;
     }
     setRoster(r => r.filter(e => e.id !== id));
@@ -129,7 +150,15 @@ export default function App() {
               <h2 className="!text-xl !md:text-4xl font-bold mr-2">King of Diamonds - てんびん</h2>
               <div className="space-x-2 space-y-0.5">
                 <BGMPlayer />
-                <button onClick={addBot} className="px-3 py-1.5 !bg-indigo-600 rounded hover:!bg-indigo-500">
+                <button
+                  onClick={addBot}
+                  disabled={botCount >= MAX_BOTS}
+                  className={`px-3 py-1.5 rounded ${botCount >= MAX_BOTS
+                    ? '!bg-indigo-700/60 !text-slate-300 cursor-not-allowed'
+                    : '!bg-indigo-600 hover:!bg-indigo-500'
+                    }`}
+                  title={botCount >= MAX_BOTS ? 'Max player number reached' : 'Add a bot'}
+                >
                   Add Bot
                 </button>
                 <button onClick={startGame} className="px-3 py-1.5 !bg-emerald-600 rounded hover:!bg-emerald-500">
@@ -139,7 +168,7 @@ export default function App() {
             </header>
 
             <section>
-              <h2 className="text-lg font-semibold mb-2">Roster (starts with 3 players)</h2>
+              <h2 className="text-lg font-semibold mb-2">{`Roster (Currently ${roster.length} players)`}</h2>
               <div className="overflow-x-auto">
                 <table className="min-w-full text-sm">
                   <thead>
@@ -182,8 +211,11 @@ export default function App() {
                         <td className="px-3 py-2">
                           <button
                             onClick={() => removePlayer(r.id)}
-                            className="!bg-transparent !text-red-800/80 disabled:!text-slate-400/80"
-                            disabled={roster.length <= 3}
+                            className={`!bg-transparent ${roster.length <= 3
+                              ? '!text-slate-400/80 cursor-not-allowed'
+                              : '!text-red-800/80'
+                              }`}
+                            aria-disabled={roster.length <= 3}
                             // Minimal to start : 3 players
                             title="Delete this player"
                           >
@@ -213,6 +245,13 @@ export default function App() {
               }}
             />
           </div>
+          {notice && (
+            <PopupNotice
+              key={notice.id}
+              message={notice.message}
+              onDone={() => setNotice(null)}
+            />
+          )}
         </div>
       </BGMProvider>
     );
