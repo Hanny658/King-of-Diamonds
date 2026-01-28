@@ -262,7 +262,7 @@ export default function App() {
               allKinds={ALL_KINDS}
               settings={{
                 minPlayers: 3,
-                maxPlayers: 24,
+                maxPlayers: 8,
                 initialHP: 10,
                 numberRange: [0, 100],
                 singletonKinds: SINGLETON_KINDS,
@@ -423,7 +423,7 @@ export default function App() {
             allKinds={ALL_KINDS}
             settings={{
               minPlayers: 3,
-              maxPlayers: 24,
+              maxPlayers: 8,
               initialHP: 10,
               numberRange: [0, 100],
               singletonKinds: SINGLETON_KINDS,
